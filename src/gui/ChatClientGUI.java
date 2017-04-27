@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import javax.swing.JButton;
@@ -13,7 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
+	
 	private Socket s;
+	private BufferedWriter writer;
 	private JFrame frame = new JFrame("Chat"); // Fönstret.
 
 	private JPanel mainPanel = new JPanel();
@@ -25,7 +29,8 @@ public class ChatClientGUI {
 
 	public ChatClientGUI() {
 		try {
-			//s = new Socket("localhost", 30000);
+			s = new Socket("localhost", 30000);
+			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 
 			buttonPanel.setLayout(new GridLayout(1, 0));
