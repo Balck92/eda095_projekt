@@ -5,8 +5,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
@@ -19,6 +21,7 @@ public class ChatClientGUI {
 
 	private Socket s;
 	private BufferedWriter writer;
+	private BufferedReader reader;
 	private JFrame frame = new JFrame("Chat"); // Fönstret.
 
 	private JPanel mainPanel = new JPanel();
@@ -32,8 +35,24 @@ public class ChatClientGUI {
 		try {
 			s = new Socket("localhost", 30000);
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
+			
+			new Thread() {
+				public void run() {
+					while (true) {
+						try {
+							String line = reader.readLine();
+							if (line != null) {
+								System.out.println(line);
+							}
+						} catch (IOException e) {
+							System.exit(0);
+						}
+					}
+				}
+			}.start();
 
 			buttonPanel.setLayout(new GridLayout(1, 0));
 			buttonPanel.add(broadcastButton);
@@ -71,6 +90,8 @@ public class ChatClientGUI {
 			try {
 				writer.write("Q\r\n");
 				writer.flush();
+				writer.close();
+				reader.close();
 				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
