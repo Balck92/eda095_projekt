@@ -30,6 +30,8 @@ public class ChatClientGUI {
 	private JButton broadcastButton = new JButton("Broadcast");
 	private JButton echoButton = new JButton("Echo");
 	private JButton quitButton = new JButton("Quit");
+	
+	private Thread readThread;
 
 	public ChatClientGUI() {
 		try {
@@ -39,7 +41,7 @@ public class ChatClientGUI {
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
 			
-			new Thread() {
+			readThread = new Thread() {
 				public void run() {
 					while (true) {
 						try {
@@ -52,7 +54,8 @@ public class ChatClientGUI {
 						}
 					}
 				}
-			}.start();
+			};
+			readThread.start();
 
 			buttonPanel.setLayout(new GridLayout(1, 0));
 			buttonPanel.add(broadcastButton);
