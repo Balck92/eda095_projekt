@@ -51,7 +51,7 @@ public class ChatClientGUI {
 			frame.setSize(new Dimension(500, 300));
 			frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar
 												// mitt på skärmen
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
