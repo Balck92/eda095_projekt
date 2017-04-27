@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
-	Socket s;
+	private Socket s;
 	private JFrame frame = new JFrame("Chat"); // Fönstret.
 
 	private JPanel mainPanel = new JPanel();
