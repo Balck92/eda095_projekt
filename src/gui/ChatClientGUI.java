@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
-
-	private JFrame frame = new JFrame("Chat");	// F�nstret.
 	private Socket s;
 	private BufferedWriter writer;
 	private BufferedReader reader;
@@ -84,28 +82,28 @@ public class ChatClientGUI {
 			};
 			readThread.start();
 
-			buttonPanel.setLayout(new GridLayout(1, 0));
-			buttonPanel.add(broadcastButton);
-			buttonPanel.add(echoButton);
-			buttonPanel.add(quitButton);
-
-			textField.setText("Text");
-
-			mainPanel.setLayout(new GridLayout(0, 1));
-			mainPanel.add(textField);
-			mainPanel.add(buttonPanel);
-			mainPanel.add(textLabel);
-
-			textField.setBounds(0, 0, 500, 150);
-			buttonPanel.setBounds(0, 150, 500, 50);
-			textLabel.setBounds(0, 250, 500, 50);
-
-			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-			frame.setSize(new Dimension(500, 300));
-			frame.setLocationRelativeTo(null); // G�r s� att f�nstret hamnar
-												// mitt p� sk�rmen
-			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			frame.setVisible(true);
+//			buttonPanel.setLayout(new GridLayout(1, 0));
+//			buttonPanel.add(broadcastButton);
+//			buttonPanel.add(echoButton);
+//			buttonPanel.add(quitButton);
+//
+//			textField.setText("Text");
+//
+//			mainPanel.setLayout(new GridLayout(0, 1));
+//			mainPanel.add(textField);
+//			mainPanel.add(buttonPanel);
+//			mainPanel.add(textLabel);
+//
+//			textField.setBounds(0, 0, 500, 150);
+//			buttonPanel.setBounds(0, 150, 500, 50);
+//			textLabel.setBounds(0, 250, 500, 50);
+//
+//			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
+//			frame.setSize(new Dimension(500, 300));
+//			frame.setLocationRelativeTo(null); // G�r s� att f�nstret hamnar
+//												// mitt p� sk�rmen
+//			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
