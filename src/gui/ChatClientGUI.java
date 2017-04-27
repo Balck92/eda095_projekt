@@ -13,10 +13,11 @@ import javax.swing.JTextField;
 
 public class ChatClientGUI {
 	
-	private JFrame frame = new JFrame("Chat");	// Fönstret.
+	private JFrame frame = new JFrame("Chat");	// Fï¿½nstret.
 	
 	private JPanel mainPanel = new JPanel();
 	private JTextField textField = new JTextField();
+	private JTextField textField2 = new JTextField();
 	private JPanel buttonPanel = new JPanel();
 	private JButton broadcastButton = new JButton("Broadcast");
 	private JButton echoButton = new JButton("Echo");
@@ -31,16 +32,18 @@ public class ChatClientGUI {
 		buttonPanel.add(quitButton);
 		
 		textField.setText("Text");
-		
+		textField2.setText("Hej");
 		mainPanel.setLayout(null);
 		mainPanel.add(textField);
+		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
-		textField.setBounds(0, 0, 500, 150);
-		buttonPanel.setBounds(0, 150, 500, 150);
+		textField.setBounds(0, 0, 700, 425);
+		textField2.setBounds(0,425,700,150);
+		buttonPanel.setBounds(0, 575, 700, 100);
 		
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		frame.setSize(new Dimension(500, 300));
-		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på skärmen
+		frame.setSize(new Dimension(700, 700));
+		frame.setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar mitt pï¿½ skï¿½rmen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
