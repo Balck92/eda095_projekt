@@ -14,7 +14,8 @@ import javax.swing.JTextField;
 
 public class ChatClientGUI {
 	Socket s;
-	private JFrame frame = new JFrame("Chat"); // Fönstret.
+	Socket s2;
+	private JFrame frame = new JFrame("Chat"); // Fï¿½nstret.
 
 	private JPanel mainPanel = new JPanel();
 	private JTextField textField = new JTextField();
@@ -43,8 +44,8 @@ public class ChatClientGUI {
 
 			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 			frame.setSize(new Dimension(500, 300));
-			frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar
-												// mitt på skärmen
+			frame.setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar
+												// mitt pï¿½ skï¿½rmen
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
 		} catch (Exception e) {
