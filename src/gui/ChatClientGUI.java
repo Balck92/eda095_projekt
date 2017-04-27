@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
@@ -15,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
-	
+
 	private Socket s;
 	private BufferedWriter writer;
 	private JFrame frame = new JFrame("Chat"); // Fönstret.
@@ -48,8 +49,8 @@ public class ChatClientGUI {
 
 			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 			frame.setSize(new Dimension(500, 300));
-			frame.setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar
-												// mitt pï¿½ skï¿½rmen
+			frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar
+												// mitt på skärmen
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
 		} catch (Exception e) {
@@ -66,8 +67,15 @@ public class ChatClientGUI {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			System.exit(0);
+			try {
+				writer.write("Q");
+				writer.flush();
+				System.exit(0);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
-
 	}
+
 }
