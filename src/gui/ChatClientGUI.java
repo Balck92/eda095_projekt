@@ -33,6 +33,7 @@ public class ChatClientGUI {
 			s = new Socket("localhost", 30000);
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
+			broadcastButton.addActionListener(new BroadcastButtonListener());
 
 			buttonPanel.setLayout(new GridLayout(1, 0));
 			buttonPanel.add(broadcastButton);
@@ -76,6 +77,21 @@ public class ChatClientGUI {
 				System.exit(1);
 			}
 		}
+	}
+	
+	private class BroadcastButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			try {
+				writer.write("M:" + textField.getText() + "\r\n");
+				writer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		
 	}
 
 }
