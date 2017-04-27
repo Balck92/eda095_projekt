@@ -1,3 +1,4 @@
-# eda095_projekt
+# eda095 projekt
 
-Test
+Lisa Silfversten, Amanda Eliasson, Carl Johan Balck, Niklas Ovnell
+
