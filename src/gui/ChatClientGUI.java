@@ -14,6 +14,7 @@ import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -27,6 +28,7 @@ public class ChatClientGUI {
 	private JPanel mainPanel = new JPanel();
 	private JTextField textField = new JTextField();
 	private JPanel buttonPanel = new JPanel();
+	private JLabel textLabel = new JLabel("Text label");
 	private JButton broadcastButton = new JButton("Broadcast");
 	private JButton echoButton = new JButton("Echo");
 	private JButton quitButton = new JButton("Quit");
@@ -40,6 +42,7 @@ public class ChatClientGUI {
 			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
+			echoButton.addActionListener(new EchoButtonListener());
 			
 			readThread = new Thread() {
 				public void run() {
@@ -47,7 +50,7 @@ public class ChatClientGUI {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								System.out.println(line);
+								textLabel.setText(line);
 							}
 						} catch (IOException e) {
 							System.exit(0);
@@ -64,11 +67,14 @@ public class ChatClientGUI {
 
 			textField.setText("Text");
 
-			mainPanel.setLayout(null);
+			mainPanel.setLayout(new GridLayout(0, 1));
 			mainPanel.add(textField);
 			mainPanel.add(buttonPanel);
+			mainPanel.add(textLabel);
+			
 			textField.setBounds(0, 0, 500, 150);
-			buttonPanel.setBounds(0, 150, 500, 150);
+			buttonPanel.setBounds(0, 150, 500, 50);
+			textLabel.setBounds(0, 250, 500, 50);
 
 			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 			frame.setSize(new Dimension(500, 300));
@@ -109,6 +115,21 @@ public class ChatClientGUI {
 		public void actionPerformed(ActionEvent arg0) {
 			try {
 				writer.write("M:" + textField.getText() + "\r\n");
+				writer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		
+	}
+	
+	private class EchoButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			try {
+				writer.write("E:" + textField.getText() + "\r\n");
 				writer.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
