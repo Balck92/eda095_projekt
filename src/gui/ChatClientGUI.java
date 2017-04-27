@@ -32,7 +32,7 @@ public class ChatClientGUI {
 		buttonPanel.add(quitButton);
 		
 		textField.setText("Text");
-		textField2.setText("Hej");
+		textField2.setText("text2");
 		mainPanel.setLayout(null);
 		mainPanel.add(textField);
 		mainPanel.add(textField2);
