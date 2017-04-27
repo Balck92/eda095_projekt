@@ -68,7 +68,7 @@ public class ChatClientGUI {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				writer.write("Q");
+				writer.write("Q\r\n");
 				writer.flush();
 				System.exit(0);
 			} catch (IOException e) {
