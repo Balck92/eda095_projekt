@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -68,12 +69,23 @@ public class ChatClientGUI {
 			echoButton.addActionListener(new EchoButtonListener());
 
 			readThread = new Thread() {
+				private LinkedList<String> messageList = new LinkedList<String>();
 				public void run() {
 					while (true) {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								messages.setText(line);
+								if (messageList.size() == 27) {
+									messageList.removeFirst();
+								}
+								messageList.addLast(line);
+								StringBuilder displayText = new StringBuilder();
+								displayText.append("<html>");
+								for (String message : messageList) {
+									displayText.append(message + "<br>");
+								}
+								displayText.append("</html>");
+								messages.setText(displayText.toString());
 							}
 						} catch (IOException e) {
 							System.exit(0);
