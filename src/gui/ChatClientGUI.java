@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,13 +22,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
+	
+	public static void main(String[] args) {
+		new ChatClientGUI();
+	}
+	
 	private Socket s;
 	private BufferedWriter writer;
 	private BufferedReader reader;
 	private JFrame frame = new JFrame("Chat"); // Fönstret
 
 	private JPanel mainPanel = new JPanel();
-	//private JTextField textField = new JTextField();
 	private JTextArea messages = new JTextArea();
 	
 	private JTextField textField2 = new JTextField();
@@ -60,6 +66,14 @@ public class ChatClientGUI {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setVisible(true);
 		
+		// Gör så att fönstret anropar quit() när det stängs.
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				quit();
+			}
+		});
+		
 		try {
 			s = new Socket("localhost", 30000);
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
@@ -92,53 +106,39 @@ public class ChatClientGUI {
 				}
 			};
 			readThread.start();
-
-//			buttonPanel.setLayout(new GridLayout(1, 0));
-//			buttonPanel.add(broadcastButton);
-//			buttonPanel.add(echoButton);
-//			buttonPanel.add(quitButton);
-//
-//			textField.setText("Text");
-//
-//			mainPanel.setLayout(new GridLayout(0, 1));
-//			mainPanel.add(textField);
-//			mainPanel.add(buttonPanel);
-//			mainPanel.add(textLabel);
-//
-//			textField.setBounds(0, 0, 500, 150);
-//			buttonPanel.setBounds(0, 150, 500, 50);
-//			textLabel.setBounds(0, 250, 500, 50);
-//
-//			frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-//			frame.setSize(new Dimension(500, 300));
-//			frame.setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar
-//												// mitt pï¿½ skï¿½rmen
-//			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
-
-	public static void main(String[] args) {
-		new ChatClientGUI();
+	
+	private void sendMessage(String mess) {
+		try {
+			writer.write(mess + "\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	private void quit() {
+		try {
+			sendMessage("Q");
+			writer.close();
+			reader.close();
+			System.exit(0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	private class QuitButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			try {
-				writer.write("Q\r\n");
-				writer.flush();
-				writer.close();
-				reader.close();
-				System.exit(0);
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+			quit();
 		}
 	}
 
@@ -146,13 +146,7 @@ public class ChatClientGUI {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			try {
-				writer.write("M:" + textField2.getText() + "\r\n");
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+			sendMessage("M:" + textField2.getText());
 		}
 
 	}
@@ -161,13 +155,7 @@ public class ChatClientGUI {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			try {
-				writer.write("E:" + textField2.getText() + "\r\n");
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+			sendMessage("E:" + textField2.getText());
 		}
 
 	}
