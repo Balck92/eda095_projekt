@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 public class ChatClientGUI {
 	
 	public static void main(String[] args) {
-		new ChatClientGUI();
+		new ChatClientGUI("localhost", 30000);
 	}
 	
 	private Socket s;
@@ -43,7 +43,7 @@ public class ChatClientGUI {
 
 	private Thread readThread;
 
-	public ChatClientGUI() {
+	public ChatClientGUI(String host, int port) {
 		quitButton.addActionListener(new QuitButtonListener());
 
 		buttonPanel.setLayout(new GridLayout(1, 0));
@@ -75,7 +75,7 @@ public class ChatClientGUI {
 		});
 		
 		try {
-			s = new Socket("localhost", 30000);
+			s = new Socket(host, port);
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
