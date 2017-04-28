@@ -22,13 +22,13 @@ public class ChatClientGUI {
 	private Socket s;
 	private BufferedWriter writer;
 	private BufferedReader reader;
-	private JFrame frame = new JFrame("Chat"); // Fï¿½nstret.
+	private JFrame frame = new JFrame("Chat"); // Fönstret
 
 	private JPanel mainPanel = new JPanel();
 	private JTextField textField = new JTextField();
 	private JTextField textField2 = new JTextField();
 	private JPanel buttonPanel = new JPanel();
-	private JLabel textLabel = new JLabel("Text label");
+	//private JLabel textLabel = new JLabel("Text label");
 	private JButton broadcastButton = new JButton("Broadcast");
 	private JButton echoButton = new JButton("Echo");
 	private JButton quitButton = new JButton("Quit");
@@ -55,9 +55,10 @@ public class ChatClientGUI {
 
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		frame.setSize(new Dimension(700, 700));
-		frame.setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar mitt pï¿½ skï¿½rmen
+		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på skärmen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		
 		try {
 			s = new Socket("localhost", 30000);
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
@@ -72,7 +73,7 @@ public class ChatClientGUI {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								textLabel.setText(line);
+								textField.setText(line);
 							}
 						} catch (IOException e) {
 							System.exit(0);
@@ -136,7 +137,7 @@ public class ChatClientGUI {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				writer.write("M:" + textField.getText() + "\r\n");
+				writer.write("M:" + textField2.getText() + "\r\n");
 				writer.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -151,7 +152,7 @@ public class ChatClientGUI {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				writer.write("E:" + textField.getText() + "\r\n");
+				writer.write("E:" + textField2.getText() + "\r\n");
 				writer.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
