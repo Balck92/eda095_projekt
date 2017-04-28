@@ -15,8 +15,8 @@ import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
@@ -27,7 +27,7 @@ public class ChatClientGUI {
 
 	private JPanel mainPanel = new JPanel();
 	//private JTextField textField = new JTextField();
-	private JLabel messages = new JLabel();
+	private JTextArea messages = new JTextArea();
 	
 	private JTextField textField2 = new JTextField();
 	private JPanel buttonPanel = new JPanel();
@@ -75,16 +75,14 @@ public class ChatClientGUI {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								if (messageList.size() == 27) {
+								if (messageList.size() == 26) {
 									messageList.removeFirst();
 								}
 								messageList.addLast(line);
 								StringBuilder displayText = new StringBuilder();
-								displayText.append("<html>");
 								for (String message : messageList) {
-									displayText.append(message + "<br>");
+									displayText.append(message + "\n");
 								}
-								displayText.append("</html>");
 								messages.setText(displayText.toString());
 							}
 						} catch (IOException e) {
