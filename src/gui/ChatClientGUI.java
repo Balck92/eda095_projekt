@@ -25,10 +25,11 @@ public class ChatClientGUI {
 	private JFrame frame = new JFrame("Chat"); // Fönstret
 
 	private JPanel mainPanel = new JPanel();
-	private JTextField textField = new JTextField();
+	//private JTextField textField = new JTextField();
+	private JLabel messages = new JLabel();
+	
 	private JTextField textField2 = new JTextField();
 	private JPanel buttonPanel = new JPanel();
-	//private JLabel textLabel = new JLabel("Text label");
 	private JButton broadcastButton = new JButton("Broadcast");
 	private JButton echoButton = new JButton("Echo");
 	private JButton quitButton = new JButton("Quit");
@@ -43,20 +44,19 @@ public class ChatClientGUI {
 		buttonPanel.add(echoButton);
 		buttonPanel.add(quitButton);
 
-		textField.setText("Text");
 		textField2.setText("text2");
 		mainPanel.setLayout(null);
-		mainPanel.add(textField);
+		mainPanel.add(messages);
 		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
-		textField.setBounds(0, 0, 700, 425);
+		messages.setBounds(0, 0, 700, 425);
 		textField2.setBounds(0,425,700,150);
 		buttonPanel.setBounds(0, 575, 700, 100);
 
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		frame.setSize(new Dimension(700, 700));
 		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på skärmen
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setVisible(true);
 		
 		try {
@@ -73,7 +73,7 @@ public class ChatClientGUI {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								textField.setText(line);
+								messages.setText(line);
 							}
 						} catch (IOException e) {
 							System.exit(0);
