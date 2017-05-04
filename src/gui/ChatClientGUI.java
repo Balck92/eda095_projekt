@@ -12,7 +12,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
+import java.io.Writer;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -22,19 +24,20 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class ChatClientGUI {
-	
+
 	public static void main(String[] args) {
 		new ChatClientGUI("localhost", 30000);
 	}
-	
-	private Socket s;
-	private BufferedWriter writer;
+
+	private URL url;
+	private URLConnection uc;
+	private Writer writer;
 	private BufferedReader reader;
 	private JFrame frame = new JFrame("Chat"); // Fönstret
 
 	private JPanel mainPanel = new JPanel();
 	private JTextArea messages = new JTextArea();
-	
+
 	private JTextField textField2 = new JTextField();
 	private JPanel buttonPanel = new JPanel();
 	private JButton broadcastButton = new JButton("Broadcast");
@@ -57,15 +60,16 @@ public class ChatClientGUI {
 		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
 		messages.setBounds(0, 0, 700, 425);
-		textField2.setBounds(0,425,700,150);
+		textField2.setBounds(0, 425, 700, 150);
 		buttonPanel.setBounds(0, 575, 700, 100);
 
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		frame.setSize(new Dimension(700, 700));
-		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på skärmen
+		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på
+											// skärmen
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setVisible(true);
-		
+
 		// Gör så att fönstret anropar quit() när det stängs.
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -73,22 +77,26 @@ public class ChatClientGUI {
 				quit();
 			}
 		});
-		
+
 		try {
-			s = new Socket(host, port);
-			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			url = new URL("http://" + host + ":" + port);
+			uc = url.openConnection();
+			uc.setDoOutput(true);
+			writer = new BufferedWriter(new OutputStreamWriter(uc.getOutputStream()));
+			reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
 			echoButton.addActionListener(new EchoButtonListener());
 
 			readThread = new Thread() {
 				private LinkedList<String> messageList = new LinkedList<String>();
+
 				public void run() {
 					while (true) {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
+								System.out.println(line);
 								if (messageList.size() == 26) {
 									messageList.removeFirst();
 								}
@@ -112,16 +120,22 @@ public class ChatClientGUI {
 		}
 	}
 	
-	private void sendMessage(String mess) {
+	private void sendHTTPMessage(String mess) {
 		try {
-			writer.write(mess + "\r\n");
+			String httpMessage = "POST / HTTP/1.1\r\n\r\n" + mess;
+			System.out.println(httpMessage);
+			writer.write(httpMessage);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
-	
+
+	private void sendMessage(String mess) {
+		sendHTTPMessage(mess + "\r\n");
+	}
+
 	private void quit() {
 		try {
 			sendMessage("Q");

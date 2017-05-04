@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.Socket;
 
 public class ConnectionThread extends Thread {
@@ -20,34 +21,36 @@ public class ConnectionThread extends Thread {
 
 	public void run() {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-			mailbox.addWriter(bw);
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			Writer writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+			mailbox.addWriter(writer);
 
 			mailbox.broadcast(getName() + " joined"); // Sends a message to
 														// everyone that this
 														// person joined.
-
+			
 			while (true) {
-				String line = br.readLine();
+				String line = reader.readLine();
 				if (line != null && !line.isEmpty()) {
+					System.out.println(line);
 					switch (Character.toUpperCase(line.charAt(0))) {
 					case 'M':
 						mailbox.broadcast(line.substring(2));
 						break;
 					case 'E':
-						echoMessage(line, bw);
+						echoMessage(line, writer);
 						break;
 					case 'Q':
 						mailbox.broadcast(getName() + " left");
-						mailbox.removeWriter(bw); // The mailbox should no
+						mailbox.removeWriter(writer); // The mailbox should no
 													// longer send messages to
 													// this user.
-						br.close(); // Close the writer and reader.
-						bw.close();
+						reader.close(); // Close the writer and reader.
+						writer.close();
 						return;
 					default:
-						errorMessage(line, bw);
+						//errorMessage(line, writer);
 						break;
 					}
 				}
@@ -58,19 +61,19 @@ public class ConnectionThread extends Thread {
 		}
 	}
 	
-	private void sendMessage(String message, BufferedWriter bw) throws IOException {
-		bw.write(message + "\r\n");
-		bw.flush();
+	private void sendMessage(String message, Writer writer) throws IOException {
+		writer.write(message + "\r\n");
+		writer.flush();
 	}
 
-	private void echoMessage(String message, BufferedWriter bw) throws IOException {
+	private void echoMessage(String message, Writer writer) throws IOException {
 		if (message.length() >= 2) {
-			sendMessage(message.substring(2), bw);
+			sendMessage(message.substring(2), writer);
 		}
 	}
 	
-	private void errorMessage(String message, BufferedWriter bw) throws IOException {
+	private void errorMessage(String message, Writer writer) throws IOException {
 		sendMessage("Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
-				+ " \"E:\" to echo it or \"Q\" to quit.", bw);
+				+ " \"E:\" to echo it or \"Q\" to quit.", writer);
 	}
 }

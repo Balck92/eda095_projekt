@@ -1,30 +1,31 @@
 package serverIntegration;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Vector;
 
 public class ServerMailbox {
 
-	private Vector<BufferedWriter> outputs = new Vector<BufferedWriter>();
+	private Vector<Writer> outputs = new Vector<Writer>();
 	
-	public void addWriter(BufferedWriter writer) {
+	public void addWriter(Writer writer) {
 		outputs.addElement(writer);
 	}
 
 	public synchronized void broadcast(String message) {
-		for (BufferedWriter out : outputs) {
+		for (Writer writer : outputs) {
 			try {
-				out.write(message + "\r\n");
-				out.flush();
+				String httpResponse = "HTTP/1.1 200 OK \r\n\r\n" + message + "\r\n";
+				writer.write(httpResponse);
+				writer.flush();
 			} catch (IOException e) {
-				outputs.remove(out);
+				outputs.remove(writer);
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void removeWriter(BufferedWriter writer) {
+	public void removeWriter(Writer writer) {
 		outputs.remove(writer);
 	}
 }
