@@ -31,7 +31,6 @@ public class ChatClientGUI {
 
 	private URL url;
 	private URLConnection uc;
-	private Writer writer;
 	private BufferedReader reader;
 	private JFrame frame = new JFrame("Chat"); // Fönstret
 
@@ -79,10 +78,9 @@ public class ChatClientGUI {
 		});
 
 		try {
-			url = new URL("http://" + host + ":" + port + "?M=asd");
+			url = new URL("http://" + host + ":" + port);
 			uc = url.openConnection();
 			uc.setDoOutput(true);
-			writer = new OutputStreamWriter(new BufferedOutputStream(uc.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
@@ -124,7 +122,10 @@ public class ChatClientGUI {
 			//URL url = new URL("http://localhost:30000/?M=asd");
 			//URLConnection uc = url.openConnection();
 			//BufferedReader reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			System.out.println(mess);
+			Writer writer = new OutputStreamWriter(new BufferedOutputStream(uc.getOutputStream()));
 			writer.write(mess);
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -138,7 +139,6 @@ public class ChatClientGUI {
 	private void quit() {
 		try {
 			sendMessage("Q");
-			writer.close();
 			reader.close();
 			System.exit(0);
 		} catch (IOException e) {
@@ -159,6 +159,7 @@ public class ChatClientGUI {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			System.out.println("broadcast");
 			sendMessage("M:" + textField2.getText());
 		}
 
