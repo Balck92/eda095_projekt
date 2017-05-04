@@ -1,6 +1,7 @@
 package serverIntegration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -34,6 +35,12 @@ public class ChatServer extends Thread {
 				try {
 					while (true) {
 						Socket s = ss.accept();
+						InputStream is = s.getInputStream();
+						int c;
+						while ((c=is.read()) != -1) {
+							System.out.print((char)c);
+						}
+						System.out.println();
 						sockets.add(s);
 						new ConnectionThread(s.getInetAddress().getHostName(), mailbox, s).start();
 					}

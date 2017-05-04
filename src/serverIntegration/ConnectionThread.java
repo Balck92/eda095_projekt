@@ -33,7 +33,6 @@ public class ConnectionThread extends Thread {
 			while (true) {
 				String line = reader.readLine();
 				if (line != null && !line.isEmpty()) {
-					System.out.println(line);
 					switch (Character.toUpperCase(line.charAt(0))) {
 					case 'M':
 						mailbox.broadcast(line.substring(2));

@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -79,10 +79,10 @@ public class ChatClientGUI {
 		});
 
 		try {
-			url = new URL("http://" + host + ":" + port);
+			url = new URL("http://" + host + ":" + port + "?M=asd");
 			uc = url.openConnection();
 			uc.setDoOutput(true);
-			writer = new BufferedWriter(new OutputStreamWriter(uc.getOutputStream()));
+			writer = new OutputStreamWriter(new BufferedOutputStream(uc.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			quitButton.addActionListener(new QuitButtonListener());
 			broadcastButton.addActionListener(new BroadcastButtonListener());
@@ -96,7 +96,6 @@ public class ChatClientGUI {
 						try {
 							String line = reader.readLine();
 							if (line != null) {
-								System.out.println(line);
 								if (messageList.size() == 26) {
 									messageList.removeFirst();
 								}
@@ -122,10 +121,10 @@ public class ChatClientGUI {
 	
 	private void sendHTTPMessage(String mess) {
 		try {
-			String httpMessage = "POST / HTTP/1.1\r\n\r\n" + mess;
-			System.out.println(httpMessage);
-			writer.write(httpMessage);
-			writer.flush();
+			//URL url = new URL("http://localhost:30000/?M=asd");
+			//URLConnection uc = url.openConnection();
+			//BufferedReader reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			writer.write(mess);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
