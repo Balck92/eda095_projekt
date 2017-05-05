@@ -29,20 +29,21 @@ public class ConnectionThread extends Thread {
 			while (true) {
 				String line = br.readLine();
 				if (line != null && !line.isEmpty()) {
-					switch (Character.toUpperCase(line.charAt(0))) {
-					case 'M':
-						mailbox.broadcast(user.getName() + ": " + line.substring(2));
-						break;
-					case 'E':
+					if (line.startsWith("M:")) {
+						mailbox.broadcast(taggedMessage(line.substring(2)));
+					} else if (line.startsWith("E:")) {
 						echoMessage(line, writer);
-						break;
-					case 'Q':
+					} else if (line.startsWith("Q")) {
 						mailbox.broadcast(user.getName() + " left.");
 						mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
 						br.close(); // Close the writer and reader.
 						writer.close();
 						return;
-					default:
+					} else if (line.startsWith("P:")) {
+						String name = line.substring(line.indexOf("name=") + 5);
+						String message = br.readLine();
+						mailbox.sendMessage(name, taggedMessage(message));
+					} else {
 						errorMessage(line, writer);
 						break;
 					}
@@ -52,6 +53,10 @@ public class ConnectionThread extends Thread {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	private String taggedMessage(String message) {
+		return user.getName() + ": " + message;
 	}
 
 	private void getUserName() {

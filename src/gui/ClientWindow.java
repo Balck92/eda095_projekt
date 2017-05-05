@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+// Klient-fönstret.
 public class ClientWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
@@ -39,12 +40,15 @@ public class ClientWindow extends JFrame {
 	private JButton echoButton = new JButton("Echo");
 	private JButton quitButton = new JButton("Quit");
 	
+	BroadcastButtonListener bbl = new BroadcastButtonListener();
+	QuitButtonListener qbl = new QuitButtonListener();
+	
 	Component[] components = { messages, textField2, broadcastButton, echoButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
-		quitButton.addActionListener(new QuitButtonListener());
-		broadcastButton.addActionListener(new BroadcastButtonListener());
+		quitButton.addActionListener(qbl);
+		broadcastButton.addActionListener(bbl);
 		echoButton.addActionListener(new EchoButtonListener());
 
 		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
@@ -112,7 +116,7 @@ public class ClientWindow extends JFrame {
 				client.quit();
 				break;
 			case KeyEvent.VK_ENTER:
-				send("M:", textField2.getText());
+				bbl.actionPerformed(null);
 				break;
 			}
 		}
@@ -133,7 +137,14 @@ public class ClientWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			send("M:", textField2.getText());
+			String text = textField2.getText();
+			if (text.contains(":")) {
+				String name = text.substring(0, text.indexOf(':'));
+				String message = text.substring(text.indexOf(':') + 1);
+				send("P:name=" + name + "\r\n", message);
+			} else {
+				send("M:", textField2.getText());
+			}
 		}
 
 	}

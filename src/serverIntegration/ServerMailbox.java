@@ -2,22 +2,26 @@ package serverIntegration;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 // Skickar meddelande till klienterna.
 public class ServerMailbox {
 
 	// Mappar från namn till Writer.
-	private Set<User> users = new HashSet<User>();
+	private Map<String, User> users = new HashMap<String, User>();
 
 	public synchronized boolean addUser(User user) {
-		return users.add(user);
+		if (users.containsKey(user.getName())) {	// Finns redan.
+			return false;
+		}
+		users.put(user.getName(), user);
+		return true;
 	}
 
 	// Skickar till alla klienter.
 	public synchronized void broadcast(String message) {
-		for (User user : users) {
+		for (User user : users.values()) {
 			Writer writer = user.getWriter();
 			try {
 				writer.write(message + "\r\n");
@@ -39,12 +43,16 @@ public class ServerMailbox {
 		}
 	}
 	
+	public void sendMessage(String userName, String message) {
+		sendMessage(users.get(userName).getWriter(), message);
+	}
+	
 	public synchronized boolean hasUser(String name) {
-		return users.contains(new User(name));
+		return users.containsKey(name);
 	}
 	
 	public synchronized void removeUser(User user) {
-		users.remove(user);
+		users.remove(user.getName());
 	}
 	
 	public String toString() {

@@ -81,20 +81,14 @@ public class ChatClient {
 			System.exit(1);
 		}
 	}
-
-	public void sendMessage(String mess) {
-		try {
-			writer.write(mess + "\r\n");
-			writer.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+	
+	public void sendMessage(String message) {
+		ServerMailbox.sendMessage(writer, message);
 	}
 
 	public void quit() {
 		try {
-			sendMessage("Q");
+			ServerMailbox.sendMessage(writer, "Q");
 			writer.close();
 			reader.close();
 			System.exit(0);
