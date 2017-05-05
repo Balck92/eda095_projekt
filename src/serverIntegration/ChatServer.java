@@ -1,6 +1,7 @@
 package serverIntegration;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -21,13 +22,15 @@ public class ChatServer extends Thread {
 	}
 
 	public void run() {
-
 		try {
 			ss = new ServerSocket(port);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.exit(1);
 		}
+		
+		ServerWindow window = new ServerWindow(300, 500, port);
+		window.start();
 
 		new Thread() {
 			public void run() {

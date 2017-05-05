@@ -11,7 +11,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.util.Enumeration;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
@@ -37,7 +40,7 @@ public class ChatClientGUI {
 	private JPanel mainPanel = new JPanel();
 	private JTextArea messages = new JTextArea();
 	private JTextField textField2 = new JTextField();
-	
+
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
 	private JButton broadcastButton = new JButton("Broadcast");
@@ -50,8 +53,9 @@ public class ChatClientGUI {
 		quitButton.addActionListener(new QuitButtonListener());
 		broadcastButton.addActionListener(new BroadcastButtonListener());
 		echoButton.addActionListener(new EchoButtonListener());
-		
-		buttonPanel.setLayout(new GridLayout(1, 0));	// Knapparna ligger på samma rad
+
+		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
+														// samma rad
 		buttonPanel.add(broadcastButton);
 		buttonPanel.add(echoButton);
 		buttonPanel.add(quitButton);
@@ -60,7 +64,10 @@ public class ChatClientGUI {
 		messages.setPreferredSize(new Dimension(700, 425));
 		textField2.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));	// Lägger dem under varandra
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger
+																			// dem
+																			// under
+																			// varandra
 		mainPanel.add(messages);
 		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
@@ -83,7 +90,7 @@ public class ChatClientGUI {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		readThread = new InputReaderThread();
 		readThread.start();
 	}
