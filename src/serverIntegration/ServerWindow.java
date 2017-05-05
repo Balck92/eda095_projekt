@@ -14,27 +14,23 @@ public class ServerWindow {
 	private static final String PORT_LABEL_TEXT = "Running on port %d.";
 	private static final String ONLINE_LABEL_TEXT = "Server has been online for %d minutes %d seconds.";
 
-	private JFrame frame;
-	private JButton quitButton;
+	private JFrame frame = new JFrame();
+	private JButton quitButton = new JButton("Quit");
 	private JLabel portLabel;
-	private JLabel onlineTimeLabel;
-	private Thread thread;
+	private JLabel timeOnlineLabel = new JLabel(String.format(ONLINE_LABEL_TEXT, 0, 0));
+	private Thread thread = new ServerWindowThread();
 
 	public ServerWindow(int width, int height, int port) {
-		frame = new JFrame();
 		frame.setPreferredSize(new Dimension(width, height));
-		quitButton = new JButton("Quit");
 		portLabel = new JLabel(String.format(PORT_LABEL_TEXT, port));
-		onlineTimeLabel = new JLabel(String.format(ONLINE_LABEL_TEXT, 0, 0));
-		thread = new ServerWindowThread();
 	}
 
 	public void start() {
-		frame.setTitle("ChatServer");
+		frame.setTitle("Chat Server");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(0, 1));
 		frame.add(portLabel);
-		frame.add(onlineTimeLabel);
+		frame.add(timeOnlineLabel);
 		frame.add(quitButton);
 		quitButton.addActionListener(new ActionListener() {
 			@Override
@@ -62,7 +58,7 @@ public class ServerWindow {
 			while (true) {
 				long time = System.currentTimeMillis();
 				long secondsSinceStart = (time - startTime) / 1000;
-				onlineTimeLabel.setText(String.format(ONLINE_LABEL_TEXT, secondsSinceStart / 60, secondsSinceStart % 60));
+				timeOnlineLabel.setText(String.format(ONLINE_LABEL_TEXT, secondsSinceStart / 60, secondsSinceStart % 60));
 			}
 		}
 	}

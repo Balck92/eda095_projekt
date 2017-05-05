@@ -161,10 +161,10 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
 			if (text.startsWith("/w ")) {
-				String rest = text.substring(3);
-				int nameEnd = rest.indexOf(' ');
-				String name = rest.substring(0, nameEnd);
-				String message = rest.substring(nameEnd + 1);
+				text = text.substring(3);
+				int nameEnd = text.indexOf(' ');
+				String name = text.substring(0, nameEnd);
+				String message = text.substring(nameEnd + 1);
 				send("P:name=" + name + "\r\n", message);
 			} else {
 				send("M:", inputText.getText());

@@ -28,7 +28,7 @@ public class ChatClient {
 	private BufferedReader reader;
 
 	private ClientWindow window = new ClientWindow(this);	// Fönstret.
-	private Thread readThread; // Tråd som läser input från servern.
+	private Thread readThread = new InputReaderThread(); // Tråd som läser input från servern.
 
 	public ChatClient() {
 		// Frågar användaren efter host och port.
@@ -53,7 +53,6 @@ public class ChatClient {
 	public void start() {
 		getUserName();
 		window.open();
-		readThread = new InputReaderThread();
 		readThread.start();
 	}
 	
