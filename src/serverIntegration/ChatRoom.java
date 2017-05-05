@@ -3,24 +3,34 @@ package serverIntegration;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 // Skickar meddelande till klienterna.
-public class ServerMailbox {
+public class ChatRoom {
 
 	// Mappar från namn till Writer.
 	private Map<String, User> users = new HashMap<String, User>();
+	private static final int MAX_MESSAGES_STORED = 10;
+	private LinkedList<String> latestMessages = new LinkedList<String>();
 
 	public synchronized boolean addUser(User user) {
 		if (users.containsKey(user.getName())) {	// Finns redan.
 			return false;
 		}
 		users.put(user.getName(), user);
+		for (String mess : latestMessages) {
+			sendMessage(user, mess);
+		}
 		return true;
 	}
 
 	// Skickar till alla klienter.
 	public synchronized void broadcast(String message) {
+		if (latestMessages.size() == MAX_MESSAGES_STORED) {
+			latestMessages.removeFirst();
+		}
+		latestMessages.addLast(message);
 		for (User user : users.values()) {
 			Writer writer = user.getWriter();
 			try {

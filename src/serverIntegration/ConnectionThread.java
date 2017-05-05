@@ -8,12 +8,12 @@ import java.net.SocketException;
 public class ConnectionThread extends Thread {
 
 	private User user;
-	private ServerMailbox mailbox;
+	private ChatRoom mailbox;
 
 	private Writer writer;
 	private BufferedReader br;
 
-	public ConnectionThread(ServerMailbox mailbox, User user) {
+	public ConnectionThread(ChatRoom mailbox, User user) {
 		this.mailbox = mailbox;
 		this.user = user;
 	}
@@ -47,7 +47,7 @@ public class ConnectionThread extends Thread {
 						String name = line.substring(line.indexOf(":") + 1);
 						String message = br.readLine();
 						if (mailbox.hasUser(name)) {
-							ServerMailbox.sendMessage(user.getWriter(), whisperedMessage(name, message));
+							ChatRoom.sendMessage(user.getWriter(), whisperedMessage(name, message));
 							mailbox.sendMessage(name, whisperMessage(message));
 						}
 					} else if (line.startsWith("L:")) {
@@ -82,13 +82,13 @@ public class ConnectionThread extends Thread {
 			user.setName(userName);
 			while (true) { // Finns redan en användare med det namnet.
 				if (user.getName().length() < 3) {
-					ServerMailbox.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
+					ChatRoom.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {
-					ServerMailbox.sendMessage(writer, ChatServer.NAME_ILLEGAL);
+					ChatRoom.sendMessage(writer, ChatServer.NAME_ILLEGAL);
 				} else if (mailbox.hasUser(userName)) {
-					ServerMailbox.sendMessage(writer, ChatServer.NAME_TAKEN);
+					ChatRoom.sendMessage(writer, ChatServer.NAME_TAKEN);
 				} else {
-					ServerMailbox.sendMessage(writer, ChatServer.NAME_OK);
+					ChatRoom.sendMessage(writer, ChatServer.NAME_OK);
 					return true;
 				}
 				userName = br.readLine();
@@ -114,17 +114,17 @@ public class ConnectionThread extends Thread {
 	}
 	
 	private boolean illegalName(String userName) {
-		return userName.contains(":");
+		return userName.contains(" ");
 	}
 
 	private void echoMessage(String message, Writer bw) {
 		if (message.length() >= 2) {
-			ServerMailbox.sendMessage(bw, message.substring(2));
+			ChatRoom.sendMessage(bw, message.substring(2));
 		}
 	}
 
 	private void errorMessage(String message, Writer bw) {
-		ServerMailbox.sendMessage(bw,
+		ChatRoom.sendMessage(bw,
 				"Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
 						+ " \"E:\" to echo it or \"Q\" to quit.");
 	}

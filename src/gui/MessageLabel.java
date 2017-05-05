@@ -22,17 +22,29 @@ public class MessageLabel extends JLabel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			String text = getText();
+			String name = "";
 			if (text.contains("[")) {
-				String name = text.substring(text.indexOf('[') + 1, text.indexOf(']'));
-				inputText.setText("/w " + name + " " + inputText.getText());
+				name = text.substring(text.indexOf('[') + 1, text.indexOf(']'));
 			} else if (text.contains(":")) {
-				String name = text.substring(0, text.indexOf(':'));
+				name = text.substring(0, text.indexOf(':'));
 				if (name.charAt(0) == '[') {
 					name = name.substring(1, name.length() - 1);
 				}
-				inputText.setText("/w " + name + " " + inputText.getText());
 			}
+			whisperToName(name);
 			inputText.requestFocus();
+		}
+		
+		private void whisperToName(String name) {
+			String input = inputText.getText();
+			if (input.startsWith("/w ")) {
+				input = input.substring(3);
+				int messageStart = input.indexOf(' ');
+				if (messageStart == -1)
+					return;
+				input = input.substring(messageStart + 1);
+			}
+			inputText.setText("/w " + name + " " + input);
 		}
 
 		@Override

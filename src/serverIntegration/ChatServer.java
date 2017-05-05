@@ -13,7 +13,7 @@ public class ChatServer extends Thread {
 
 	private int port;
 	private ServerSocket ss;
-	private ServerMailbox mailbox = new ServerMailbox();
+	private ChatRoom mailbox = new ChatRoom();
 
 	public static void main(String[] args) {
 		new ChatServer(30000).start();

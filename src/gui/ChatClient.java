@@ -10,7 +10,7 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 
 import serverIntegration.ChatServer;
-import serverIntegration.ServerMailbox;
+import serverIntegration.ChatRoom;
 
 // Klienten för chatt-programmet.
 public class ChatClient {
@@ -63,7 +63,7 @@ public class ChatClient {
 				String name = JOptionPane.showInputDialog(showText);
 				if (name == null)
 					System.exit(0);
-				ServerMailbox.sendMessage(writer, name);
+				ChatRoom.sendMessage(writer, name);
 				String response = reader.readLine();
 				if (response.startsWith(ChatServer.NAME_OK)) {
 					window.setTitle(name + " - Chat");
@@ -86,12 +86,12 @@ public class ChatClient {
 	}
 	
 	public void sendMessage(String message) {
-		ServerMailbox.sendMessage(writer, message);
+		ChatRoom.sendMessage(writer, message);
 	}
 
 	public void quit() {
 		try {
-			ServerMailbox.sendMessage(writer, "Q");
+			ChatRoom.sendMessage(writer, "Q");
 			writer.close();
 			reader.close();
 			System.exit(0);

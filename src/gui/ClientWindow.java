@@ -165,8 +165,14 @@ public class ClientWindow extends JFrame {
 			if (text.startsWith("/w ")) {
 				text = text.substring(3);
 				int nameEnd = text.indexOf(' ');
-				String name = text.substring(0, nameEnd);
-				String message = text.substring(nameEnd + 1);
+				String name, message;
+				if (nameEnd == -1) {	// No message
+					name = text;
+					message = "";
+				} else {
+					name = text.substring(0, nameEnd);
+					message = text.substring(nameEnd + 1);
+				}
 				send("P:" + name + "\r\n", message);
 			} else if (text.startsWith("/list")) {
 				send("L:");
