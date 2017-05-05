@@ -22,6 +22,7 @@ public class ConnectionThread extends Thread {
 		writer = user.getWriter();
 		br = user.getBufferedReader();
 		if (!getUserName()) {
+			quit();
 			return;
 		}
 		mailbox.addUser(user);
@@ -93,7 +94,7 @@ public class ConnectionThread extends Thread {
 				userName = br.readLine();
 				user.setName(userName);
 			}
-		} catch (SocketException e) {
+		} catch (SocketException e) {	// Hamnar här om användaren trycket "avbryt" när man skriver in namn.
 			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
