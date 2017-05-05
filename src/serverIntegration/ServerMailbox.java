@@ -2,32 +2,35 @@ package serverIntegration;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Vector;
+import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 // Skickar meddelande till klienterna.
 public class ServerMailbox {
 
-	private Vector<BufferedWriter> outputs = new Vector<BufferedWriter>();
+	// Mappar från namn till Writer.
+	private Set<User> users = new HashSet<User>();
 
-	public void addWriter(BufferedWriter writer) {
-		outputs.addElement(writer);
+	public synchronized boolean addUser(User user) {
+		return users.add(user);
 	}
 
 	// Skickar till alla klienter.
 	public synchronized void broadcast(String message) {
-		for (BufferedWriter out : outputs) {
+		for (User user : users) {
+			Writer writer = user.getWriter();
 			try {
-				out.write(message + "\r\n");
-				out.flush();
+				writer.write(message + "\r\n");
+				writer.flush();
 			} catch (IOException e) {
-				outputs.remove(out);
 				e.printStackTrace();
 			}
 		}
 	}
 
 	// Skickar bara till en.
-	public static void sendMessage(String message, BufferedWriter bw) {
+	public static void sendMessage(BufferedWriter bw, String message) {
 		try {
 			bw.write(message + "\r\n");
 			bw.flush();
@@ -36,8 +39,12 @@ public class ServerMailbox {
 			System.exit(1);
 		}
 	}
-
-	public void removeWriter(BufferedWriter writer) {
-		outputs.remove(writer);
+	
+	public synchronized void removeUser(User user) {
+		users.remove(user);
+	}
+	
+	public String toString() {
+		return users.toString();
 	}
 }

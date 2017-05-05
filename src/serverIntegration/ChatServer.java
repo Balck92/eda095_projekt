@@ -3,12 +3,13 @@ package serverIntegration;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
 
 public class ChatServer extends Thread {
+	
+	public static final String NAME_TAKEN = "name taken";
+	public static final String NAME_OK = "name ok";
 
 	private int port;
-	private Vector<Socket> sockets = new Vector<Socket>();
 	private ServerSocket ss;
 	private ServerMailbox mailbox = new ServerMailbox();
 
@@ -36,7 +37,6 @@ public class ChatServer extends Thread {
 				try {
 					while (true) {
 						Socket s = ss.accept();
-						sockets.add(s);
 						new ConnectionThread(s.getInetAddress().getHostName(), mailbox, s).start();
 					}
 				} catch (IOException e) {

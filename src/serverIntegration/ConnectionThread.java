@@ -22,8 +22,13 @@ public class ConnectionThread extends Thread {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-			mailbox.addWriter(bw);
-			mailbox.broadcast(getName() + " joined"); // Sends a message to
+			User user = new User(br.readLine(), bw);
+			while (!mailbox.addUser(user)) {	// Finns redan en användare med det namnet
+				ServerMailbox.sendMessage(bw, ChatServer.NAME_TAKEN);
+				user = new User(br.readLine(), bw);
+			}
+			ServerMailbox.sendMessage(bw, ChatServer.NAME_OK);
+			mailbox.broadcast(user.getName() + " joined"); // Sends a message to
 														// everyone that this
 														// person joined.
 
@@ -38,8 +43,8 @@ public class ConnectionThread extends Thread {
 						echoMessage(line, bw);
 						break;
 					case 'Q':
-						mailbox.broadcast(getName() + " left");
-						mailbox.removeWriter(bw); // The mailbox should no
+						mailbox.broadcast(user.getName() + " left");
+						mailbox.removeUser(user);	// The mailbox should no
 													// longer send messages to
 													// this user.
 						br.close(); // Close the writer and reader.
@@ -59,12 +64,13 @@ public class ConnectionThread extends Thread {
 
 	private void echoMessage(String message, BufferedWriter bw) throws IOException {
 		if (message.length() >= 2) {
-			ServerMailbox.sendMessage(message.substring(2), bw);
+			ServerMailbox.sendMessage(bw, message.substring(2));
 		}
 	}
-	
+
 	private void errorMessage(String message, BufferedWriter bw) throws IOException {
-		ServerMailbox.sendMessage("Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
-				+ " \"E:\" to echo it or \"Q\" to quit.", bw);
+		ServerMailbox.sendMessage(bw,
+				"Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
+						+ " \"E:\" to echo it or \"Q\" to quit.");
 	}
 }

@@ -11,25 +11,48 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.util.Enumeration;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import serverIntegration.ChatServer;
+import serverIntegration.ServerMailbox;
+
 public class ChatClientGUI {
 
 	public static void main(String[] args) {
-		if (args.length < 2)
-			new ChatClientGUI("localhost", 30000);
-		else
-			new ChatClientGUI(args[0], Integer.parseInt(args[1]));
-	}
+		/*try {
+			System.out.println("Your Host addr: " + InetAddress.getLocalHost().getHostAddress());  // often returns "127.0.0.1"
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();)
+			{
+				NetworkInterface e = n.nextElement();
 
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();)
+				{
+					InetAddress addr = a.nextElement();
+					System.out.println("  " + addr.getHostAddress());
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}*/
+		ChatClientGUI client = new ChatClientGUI(30000);
+		client.start();
+	}
 	// Kopplingen till servern
 	private Socket s;
 	private BufferedWriter writer;
@@ -49,7 +72,21 @@ public class ChatClientGUI {
 
 	private Thread readThread; // Tråd som läser input från servern.
 
-	public ChatClientGUI(String host, int port) {
+	public ChatClientGUI(int port) {
+		String host = JOptionPane.showInputDialog("Please enter host");
+		while (true) {
+			try {
+				host = host.isEmpty() ? "localhost" : host;
+				s = new Socket(host, port);
+				writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+				reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+				break;
+			} catch (Exception e) {
+				host = JOptionPane.showInputDialog("Cant connect. Plase enter host");
+				if (host == null) System.exit(0);
+			}
+		}
+		
 		quitButton.addActionListener(new QuitButtonListener());
 		broadcastButton.addActionListener(new BroadcastButtonListener());
 		echoButton.addActionListener(new EchoButtonListener());
@@ -60,14 +97,10 @@ public class ChatClientGUI {
 		buttonPanel.add(echoButton);
 		buttonPanel.add(quitButton);
 
-		textField2.setText("...");
 		messages.setPreferredSize(new Dimension(700, 425));
 		textField2.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger
-																			// dem
-																			// under
-																			// varandra
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
 		mainPanel.add(messages);
 		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
@@ -80,16 +113,30 @@ public class ChatClientGUI {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		// Gör så att fönstret anropar quit() när det stängs.
 		frame.addWindowListener(new WindowCloser());
-		frame.setVisible(true);
-
+	}
+	
+	public void start() {
 		try {
-			s = new Socket(host, port);
-			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-		} catch (Exception e) {
+			String showText = "Please enter your name";
+			while (true) {
+				String name = JOptionPane.showInputDialog(showText);
+				ServerMailbox.sendMessage(writer, name);
+				String response = reader.readLine();
+				if (response.startsWith(ChatServer.NAME_OK)) {
+					break;
+				} else if (response.startsWith(ChatServer.NAME_TAKEN)) {
+					showText = "Name \"" + name + "\" is taken. Please enter another name";
+				} else {
+					System.err.println("Unknown response: " + response);
+					System.exit(1);
+				}
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		textField2.requestFocus();
+		frame.setVisible(true);
 
 		readThread = new InputReaderThread();
 		readThread.start();
