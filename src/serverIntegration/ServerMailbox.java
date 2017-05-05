@@ -58,7 +58,7 @@ public class ServerMailbox {
 		sendMessage(user, "");
 		sendMessage(user, "Userlist:");
 		for (String userName : users.keySet()) {
-			sendMessage(user, userName);
+			sendMessage(user, "  " + userName);
 		}
 		sendMessage(user, "");
 	}

@@ -3,6 +3,7 @@ package serverIntegration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.SocketException;
 
 public class ConnectionThread extends Thread {
 
@@ -20,11 +21,13 @@ public class ConnectionThread extends Thread {
 	public void run() {
 		writer = user.getWriter();
 		br = user.getBufferedReader();
-		getUserName();
+		if (!getUserName()) {
+			return;
+		}
 		mailbox.addUser(user);
 		mailbox.broadcast(user.getName() + " joined."); 	// Sends a message to
-														// everyone that this
-														// person joined.
+		// everyone that this
+
 		try {
 			while (true) {
 				String line = br.readLine();
@@ -36,8 +39,7 @@ public class ConnectionThread extends Thread {
 					} else if (line.startsWith("Q")) {
 						mailbox.broadcast(user.getName() + " left.");
 						mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
-						br.close(); // Close the writer and reader.
-						writer.close();
+						quit();
 						return;
 					} else if (line.startsWith("P:")) {
 						line = line.substring(2);
@@ -73,24 +75,45 @@ public class ConnectionThread extends Thread {
 		return "to [" + user + "]: " + message;
 	}
 
-	private void getUserName() {
+	private boolean getUserName() {
 		try {
-			user.setName(br.readLine());
+			String userName = br.readLine();
+			user.setName(userName);
 			while (true) { // Finns redan en användare med det namnet.
 				if (user.getName().length() < 3) {
 					ServerMailbox.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
-				} else if (mailbox.hasUser(user.getName())) {
+				} else if (illegalName(userName)) {
+					ServerMailbox.sendMessage(writer, ChatServer.NAME_ILLEGAL);
+				} else if (mailbox.hasUser(userName)) {
 					ServerMailbox.sendMessage(writer, ChatServer.NAME_TAKEN);
 				} else {
 					ServerMailbox.sendMessage(writer, ChatServer.NAME_OK);
-					return;
+					return true;
 				}
-				user.setName(br.readLine());
+				userName = br.readLine();
+				user.setName(userName);
 			}
+		} catch (SocketException e) {
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		return false;
+	}
+	
+	private void quit() {
+		try {
+			writer.close();
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	private boolean illegalName(String userName) {
+		return userName.contains(":");
 	}
 
 	private void echoMessage(String message, Writer bw) {

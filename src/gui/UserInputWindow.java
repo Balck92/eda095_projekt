@@ -14,9 +14,9 @@ public class UserInputWindow {
 	private String host;
 	private int port;
 
-	JPanel panel;
-	JTextField hostField = new JTextField(40);
-	JTextField portField = new JTextField(40);
+	private JPanel panel;
+	private JTextField hostField = new JTextField(40);
+	private JTextField portField = new JTextField(40);
 
 	public UserInputWindow() {
 		panel = new JPanel();
@@ -30,6 +30,7 @@ public class UserInputWindow {
 
 	public void show(String promptText) {
 		int result = JOptionPane.showConfirmDialog(null, panel, promptText, JOptionPane.OK_CANCEL_OPTION);
+		hostField.requestFocus();
 		if (result == JOptionPane.OK_OPTION) {
 			host = hostField.getText();
 			try {

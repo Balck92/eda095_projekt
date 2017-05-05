@@ -61,6 +61,8 @@ public class ChatClient {
 			String showText = "Please enter your name";
 			while (true) {
 				String name = JOptionPane.showInputDialog(showText);
+				if (name == null)
+					System.exit(0);
 				ServerMailbox.sendMessage(writer, name);
 				String response = reader.readLine();
 				if (response.startsWith(ChatServer.NAME_OK)) {
@@ -70,6 +72,8 @@ public class ChatClient {
 					showText = "Name \"" + name + "\" is taken. Please enter another name";
 				} else if (response.startsWith(ChatServer.NAME_TOO_SHORT)) {
 					showText = "Name \"" + name + "\" is too short. Please enter another name";
+				} else if (response.startsWith(ChatServer.NAME_ILLEGAL)) {
+					showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
 				} else {
 					System.err.println("Unknown response: " + response);
 					System.exit(1);

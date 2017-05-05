@@ -9,6 +9,7 @@ public class ChatServer extends Thread {
 	public static final String NAME_TAKEN = "name taken";
 	public static final String NAME_OK = "name ok";
 	public static final String NAME_TOO_SHORT = "name short";
+	public static final String NAME_ILLEGAL = "name illegal";
 
 	private int port;
 	private ServerSocket ss;
