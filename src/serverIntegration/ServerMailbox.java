@@ -1,6 +1,5 @@
 package serverIntegration;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
@@ -30,7 +29,7 @@ public class ServerMailbox {
 	}
 
 	// Skickar bara till en.
-	public static void sendMessage(BufferedWriter bw, String message) {
+	public static void sendMessage(Writer bw, String message) {
 		try {
 			bw.write(message + "\r\n");
 			bw.flush();
@@ -38,6 +37,10 @@ public class ServerMailbox {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public synchronized boolean hasUser(String name) {
+		return users.contains(new User(name));
 	}
 	
 	public synchronized void removeUser(User user) {

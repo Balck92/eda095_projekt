@@ -12,40 +12,52 @@ import javax.swing.JOptionPane;
 import serverIntegration.ChatServer;
 import serverIntegration.ServerMailbox;
 
+// Klienten för chatt-programmet.
 public class ChatClient {
-	
-	private static final String ENTER_HOST_PROMPT = "Please enter host or leave empty for localhost";
+
+	private static final String ENTER_HOST_PORT_PROMPT = "Please enter host and port";
 
 	public static void main(String[] args) {
-		ChatClient client = new ChatClient(30000);
+		ChatClient client = new ChatClient();
 		client.start();
 	}
-	
+
 	// Kopplingen till servern
 	private Socket s;
 	private BufferedWriter writer;
 	private BufferedReader reader;
 
-	private ClientWindow window = new ClientWindow(this);
+	private ClientWindow window = new ClientWindow(this);	// Fönstret.
 	private Thread readThread; // Tråd som läser input från servern.
 
-	public ChatClient(int port) {
-		String host = JOptionPane.showInputDialog(ENTER_HOST_PROMPT);
+	public ChatClient() {
+		// Frågar användaren efter host och port.
+		UserInputWindow userInput = new UserInputWindow();
+		userInput.show(ENTER_HOST_PORT_PROMPT);
+		
 		while (true) {
 			try {
+				String host = userInput.getHost();
 				host = host.isEmpty() ? "localhost" : host;
+				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();
 				s = new Socket(host, port);
 				writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 				reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				break;
 			} catch (IOException e) {
-				host = JOptionPane.showInputDialog("Cant connect. " + ENTER_HOST_PROMPT);
-				if (host == null) System.exit(0);
+				userInput.show("Couldn't connect. " + ENTER_HOST_PORT_PROMPT);
 			}
 		}
 	}
-	
+
 	public void start() {
+		getUserName();
+		window.open();
+		readThread = new InputReaderThread();
+		readThread.start();
+	}
+	
+	private void getUserName() {
 		try {
 			String showText = "Please enter your name";
 			while (true) {
@@ -53,9 +65,12 @@ public class ChatClient {
 				ServerMailbox.sendMessage(writer, name);
 				String response = reader.readLine();
 				if (response.startsWith(ChatServer.NAME_OK)) {
-					break;
+					window.setTitle(name + " - Chat");
+					return;
 				} else if (response.startsWith(ChatServer.NAME_TAKEN)) {
 					showText = "Name \"" + name + "\" is taken. Please enter another name";
+				} else if (response.startsWith(ChatServer.NAME_TOO_SHORT)) {
+					showText = "Name \"" + name + "\" is too short. Please enter another name";
 				} else {
 					System.err.println("Unknown response: " + response);
 					System.exit(1);
@@ -65,10 +80,6 @@ public class ChatClient {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		window.show();
-		readThread = new InputReaderThread();
-		readThread.start();
 	}
 
 	public void sendMessage(String mess) {
@@ -92,8 +103,6 @@ public class ChatClient {
 			System.exit(1);
 		}
 	}
-
-	
 
 	// Tråd som läser input från servern.
 	private class InputReaderThread extends Thread {

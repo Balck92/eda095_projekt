@@ -21,13 +21,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class ClientWindow {
+public class ClientWindow extends JFrame {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private ChatClient client;
 	private List<String> messageList = new ArrayList<String>();
 	
 	// Fönstret
-	private JFrame frame = new JFrame("Chat");
 	private JPanel mainPanel = new JPanel();
 	private JTextArea messages = new JTextArea();
 	private JTextField textField2 = new JTextField();
@@ -60,18 +61,18 @@ public class ClientWindow {
 		mainPanel.add(textField2);
 		mainPanel.add(buttonPanel);
 
-		frame.add(mainPanel);
-		frame.pack();
-		frame.setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på
+		add(mainPanel);
+		pack();
+		setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på
 											// skärmen
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		// Gör så att fönstret anropar quit() när det stängs.
-		frame.addWindowListener(new WindowCloser());
+		addWindowListener(new WindowCloser());
 		KeyListener keyl = new KeyboardListener();
 		for (Component comp : components) {
 			comp.addKeyListener(keyl);
 		}
-		frame.addComponentListener(new ComponentAdapter() {
+		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				resizeMessages();
@@ -79,9 +80,9 @@ public class ClientWindow {
 		});
 	}
 	
-	public void show() {
+	public void open() {
 		textField2.requestFocus();
-		frame.setVisible(true);
+		setVisible(true);
 	}
 	
 	public void addLine(String line) {
@@ -90,7 +91,7 @@ public class ClientWindow {
 	}
 	
 	private void resizeMessages() {
-		int maxSize = (int) (32.0 / 900.0 * frame.getHeight());
+		int maxSize = (int) (32.0 / 900.0 * getHeight());
 		while (messageList.size() >= 100) {
 			messageList.remove(0);
 		}

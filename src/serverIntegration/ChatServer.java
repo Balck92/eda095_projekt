@@ -8,6 +8,7 @@ public class ChatServer extends Thread {
 	
 	public static final String NAME_TAKEN = "name taken";
 	public static final String NAME_OK = "name ok";
+	public static final String NAME_TOO_SHORT = "name short";
 
 	private int port;
 	private ServerSocket ss;
@@ -36,8 +37,9 @@ public class ChatServer extends Thread {
 			public void run() {
 				try {
 					while (true) {
-						Socket s = ss.accept();
-						new ConnectionThread(s.getInetAddress().getHostName(), mailbox, s).start();
+						Socket s = ss.accept();		// En ny användare anslöt.
+						User user = new User(s);
+						new ConnectionThread(mailbox, user).start();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
