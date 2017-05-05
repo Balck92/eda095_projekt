@@ -119,10 +119,6 @@ public class ChatClientGUI {
 	
 	private void sendHTTPMessage(String mess) {
 		try {
-			//URL url = new URL("http://localhost:30000/?M=asd");
-			//URLConnection uc = url.openConnection();
-			//BufferedReader reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-			System.out.println(mess);
 			Writer writer = new OutputStreamWriter(new BufferedOutputStream(uc.getOutputStream()));
 			writer.write(mess);
 			writer.close();
