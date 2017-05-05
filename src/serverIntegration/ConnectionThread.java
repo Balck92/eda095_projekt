@@ -42,7 +42,7 @@ public class ConnectionThread extends Thread {
 					} else if (line.startsWith("P:")) {
 						String name = line.substring(line.indexOf("name=") + 5);
 						String message = br.readLine();
-						mailbox.sendMessage(name, taggedMessage(message));
+						mailbox.sendMessage(name, whisperMessage(message));
 					} else {
 						errorMessage(line, writer);
 						break;
@@ -57,6 +57,10 @@ public class ConnectionThread extends Thread {
 	
 	private String taggedMessage(String message) {
 		return user.getName() + ": " + message;
+	}
+	
+	private String whisperMessage(String message) {
+		return "[" + user.getName() + "]: " + message;
 	}
 
 	private void getUserName() {

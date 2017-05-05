@@ -178,9 +178,9 @@ public class ClientWindow extends JFrame {
 	private class MessageSender {
 
 		public void send(String prefix, String message) {
+			textField2.setText("");
 			if (!message.isEmpty()) { // Skicka inte tomma meddelanden.
 				client.sendMessage(prefix + message);
-				textField2.setText("");
 			}
 		}
 	}
