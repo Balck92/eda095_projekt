@@ -11,10 +11,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.util.Enumeration;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
@@ -27,7 +24,10 @@ import javax.swing.JTextField;
 public class ChatClientGUI {
 
 	public static void main(String[] args) {
-		new ChatClientGUI("localhost", 30000);
+		if (args.length < 2)
+			new ChatClientGUI("localhost", 30000);
+		else
+			new ChatClientGUI(args[0], Integer.parseInt(args[1]));
 	}
 
 	// Kopplingen till servern
