@@ -31,6 +31,10 @@ public class ServerMailbox {
 			}
 		}
 	}
+	
+	public static void sendMessage(User user, String message) {
+		sendMessage(user.getWriter(), message);
+	}
 
 	// Skickar bara till en.
 	public static void sendMessage(Writer bw, String message) {
@@ -48,6 +52,15 @@ public class ServerMailbox {
 		if (user != null) {
 			sendMessage(user.getWriter(), message);
 		}
+	}
+	
+	public synchronized void listUsersTo(User user) {
+		sendMessage(user, "");
+		sendMessage(user, "Userlist:");
+		for (String userName : users.keySet()) {
+			sendMessage(user, userName);
+		}
+		sendMessage(user, "");
 	}
 	
 	public synchronized boolean hasUser(String name) {

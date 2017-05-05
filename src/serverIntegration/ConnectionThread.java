@@ -40,13 +40,15 @@ public class ConnectionThread extends Thread {
 						writer.close();
 						return;
 					} else if (line.startsWith("P:")) {
-						String name = line.substring(line.indexOf("name=") + 5);
+						line = line.substring(2);
+						String name = line.substring(line.indexOf(":") + 1);
 						String message = br.readLine();
 						if (mailbox.hasUser(name)) {
-							System.out.println(name);
 							ServerMailbox.sendMessage(user.getWriter(), whisperedMessage(name, message));
 							mailbox.sendMessage(name, whisperMessage(message));
 						}
+					} else if (line.startsWith("L:")) {
+						mailbox.listUsersTo(user);
 					} else {
 						errorMessage(line, writer);
 						break;

@@ -43,7 +43,7 @@ public class ClientWindow extends JFrame {
 	private JButton sendButton = new JButton("Send");
 	private JButton quitButton = new JButton("Quit");
 	
-	BroadcastButtonListener bbl = new BroadcastButtonListener();
+	SendButtonListener sbl = new SendButtonListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
 	Component[] components = { messages, inputText, sendButton, quitButton };
@@ -51,7 +51,7 @@ public class ClientWindow extends JFrame {
 	public ClientWindow(ChatClient client) {
 		this.client = client;
 		quitButton.addActionListener(qbl);
-		sendButton.addActionListener(bbl);
+		sendButton.addActionListener(sbl);
 
 		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
 														// samma rad
@@ -65,7 +65,9 @@ public class ClientWindow extends JFrame {
 		}
 		messages.setPreferredSize(new Dimension(700, 425));
 		inputText.setPreferredSize(new Dimension(700, 150));
+		inputText.setMaximumSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
+		buttonPanel.setMaximumSize(new Dimension(700, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
 		mainPanel.add(messages);
 		mainPanel.add(inputText);
@@ -138,7 +140,7 @@ public class ClientWindow extends JFrame {
 				client.quit();
 				break;
 			case KeyEvent.VK_ENTER:
-				bbl.actionPerformed(null);
+				sbl.actionPerformed(null);
 				break;
 			}
 		}
@@ -155,7 +157,7 @@ public class ClientWindow extends JFrame {
 
 	}
 	
-	private class BroadcastButtonListener extends MessageSender implements ActionListener {
+	private class SendButtonListener extends MessageSender implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -165,7 +167,9 @@ public class ClientWindow extends JFrame {
 				int nameEnd = text.indexOf(' ');
 				String name = text.substring(0, nameEnd);
 				String message = text.substring(nameEnd + 1);
-				send("P:name=" + name + "\r\n", message);
+				send("P:" + name + "\r\n", message);
+			} else if (text.startsWith("/list")) {
+				send("L:");
 			} else {
 				send("M:", inputText.getText());
 			}
@@ -191,6 +195,10 @@ public class ClientWindow extends JFrame {
 	}
 
 	private class MessageSender {
+		
+		public void send(String message) {
+			send("", message);
+		}
 
 		public void send(String prefix, String message) {
 			inputText.setText("");
