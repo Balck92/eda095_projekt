@@ -105,7 +105,7 @@ public class ClientWindow extends JFrame {
 			messageList.remove(0);
 		}
 		
-		int maxSize = (int) (START_LINES / 700.0 * getHeight());
+		int maxSize = (int) (START_LINES / 350.0 * messages.getHeight());
 		maxSize = maxSize > 30 ? 30 : maxSize;	// Max 30 messages.
 		if (labelList.size() != maxSize) {
 			messages.removeAll();
@@ -160,9 +160,11 @@ public class ClientWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
-			if (text.contains(":")) {
-				String name = text.substring(0, text.indexOf(':'));
-				String message = text.substring(text.indexOf(':') + 1);
+			if (text.startsWith("/w ")) {
+				String rest = text.substring(3);
+				int nameEnd = rest.indexOf(' ');
+				String name = rest.substring(0, nameEnd);
+				String message = rest.substring(nameEnd + 1);
 				send("P:name=" + name + "\r\n", message);
 			} else {
 				send("M:", inputText.getText());

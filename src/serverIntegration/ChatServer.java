@@ -30,7 +30,7 @@ public class ChatServer extends Thread {
 			System.exit(1);
 		}
 		
-		ServerWindow window = new ServerWindow(300, 500, port);
+		ServerWindow window = new ServerWindow(300, 190, port);
 		window.start();
 
 		new Thread() {

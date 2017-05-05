@@ -27,7 +27,7 @@ public class MessageLabel extends JLabel {
 				if (name.charAt(0) == '[') {
 					name = name.substring(1, name.length() - 1);
 				}
-				inputText.setText(name + ":" + inputText.getText());
+				inputText.setText("/w " + name + " " + inputText.getText());
 			}
 			inputText.requestFocus();
 		}
