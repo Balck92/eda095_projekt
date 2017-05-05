@@ -17,8 +17,8 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 // Klient-fönstret.
@@ -26,13 +26,17 @@ public class ClientWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
+	private static final int START_LINES = 20;
+	
 	private ChatClient client;
 	private List<String> messageList = new ArrayList<String>();
 	
 	// Fönstret
 	private JPanel mainPanel = new JPanel();
-	private JTextArea messages = new JTextArea();
-	private JTextField textField2 = new JTextField();
+	//private JTextArea messages = new JTextArea();
+	private JPanel messages = new JPanel();
+	private List<JLabel> labelList = new ArrayList<JLabel>();
+	private JTextField inputText = new JTextField();
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
@@ -43,7 +47,7 @@ public class ClientWindow extends JFrame {
 	BroadcastButtonListener bbl = new BroadcastButtonListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
-	Component[] components = { messages, textField2, broadcastButton, echoButton, quitButton };
+	Component[] components = { messages, inputText, broadcastButton, echoButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
@@ -57,12 +61,17 @@ public class ClientWindow extends JFrame {
 		buttonPanel.add(echoButton);
 		buttonPanel.add(quitButton);
 
+		messages.setLayout(new GridLayout(0, 1));
+		for (int i = 0; i < START_LINES; i++) {
+			labelList.add(new MessageLabel(inputText));
+			messages.add(labelList.get(i));
+		}
 		messages.setPreferredSize(new Dimension(700, 425));
-		textField2.setPreferredSize(new Dimension(700, 150));
+		inputText.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
 		mainPanel.add(messages);
-		mainPanel.add(textField2);
+		mainPanel.add(inputText);
 		mainPanel.add(buttonPanel);
 
 		add(mainPanel);
@@ -85,7 +94,7 @@ public class ClientWindow extends JFrame {
 	}
 	
 	public void open() {
-		textField2.requestFocus();
+		inputText.requestFocus();
 		setVisible(true);
 	}
 	
@@ -95,15 +104,31 @@ public class ClientWindow extends JFrame {
 	}
 	
 	private void resizeMessages() {
-		int maxSize = (int) (32.0 / 900.0 * getHeight());
 		while (messageList.size() >= 100) {
 			messageList.remove(0);
 		}
-		StringBuilder displayText = new StringBuilder();
-		for (int i = Math.max(messageList.size() - maxSize, 0); i < messageList.size(); i++) {
-			displayText.append(messageList.get(i) + "\n");
+		
+		int maxSize = (int) (START_LINES / 700.0 * getHeight());
+		maxSize = maxSize > 30 ? 30 : maxSize;	// Max 30 messages.
+		if (labelList.size() != maxSize) {
+			messages.removeAll();
+			while (labelList.size() < maxSize) {
+				labelList.add(new MessageLabel(inputText));
+			}
+			while (labelList.size() > maxSize) {
+				labelList.remove(labelList.size() - 1);
+			}
+			for (JLabel label : labelList) {
+				messages.add(label);
+			}
 		}
-		messages.setText(displayText.toString());
+		
+		for (int i = 0; i < labelList.size(); i++) {
+			int index = messageList.size() - labelList.size() + i;
+			if (index > 0) {
+				labelList.get(i).setText(messageList.get(index));
+			}
+		}
 	}
 	
 	private class KeyboardListener extends MessageSender implements KeyListener {
@@ -137,13 +162,13 @@ public class ClientWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String text = textField2.getText();
+			String text = inputText.getText();
 			if (text.contains(":")) {
 				String name = text.substring(0, text.indexOf(':'));
 				String message = text.substring(text.indexOf(':') + 1);
 				send("P:name=" + name + "\r\n", message);
 			} else {
-				send("M:", textField2.getText());
+				send("M:", inputText.getText());
 			}
 		}
 
@@ -153,7 +178,7 @@ public class ClientWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			send("E:", textField2.getText());
+			send("E:", inputText.getText());
 		}
 
 	}
@@ -178,7 +203,7 @@ public class ClientWindow extends JFrame {
 	private class MessageSender {
 
 		public void send(String prefix, String message) {
-			textField2.setText("");
+			inputText.setText("");
 			if (!message.isEmpty()) { // Skicka inte tomma meddelanden.
 				client.sendMessage(prefix + message);
 			}

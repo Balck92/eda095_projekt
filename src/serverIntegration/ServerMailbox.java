@@ -44,7 +44,10 @@ public class ServerMailbox {
 	}
 	
 	public void sendMessage(String userName, String message) {
-		sendMessage(users.get(userName).getWriter(), message);
+		User user = users.get(userName);
+		if (user != null) {
+			sendMessage(user.getWriter(), message);
+		}
 	}
 	
 	public synchronized boolean hasUser(String name) {
