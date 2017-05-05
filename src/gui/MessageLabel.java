@@ -22,7 +22,10 @@ public class MessageLabel extends JLabel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			String text = getText();
-			if (text.contains(":")) {
+			if (text.contains("[")) {
+				String name = text.substring(text.indexOf('[') + 1, text.indexOf(']'));
+				inputText.setText("/w " + name + " " + inputText.getText());
+			} else if (text.contains(":")) {
 				String name = text.substring(0, text.indexOf(':'));
 				if (name.charAt(0) == '[') {
 					name = name.substring(1, name.length() - 1);
