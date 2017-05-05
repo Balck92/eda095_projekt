@@ -40,25 +40,22 @@ public class ClientWindow extends JFrame {
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
-	private JButton broadcastButton = new JButton("Broadcast");
-	private JButton echoButton = new JButton("Echo");
+	private JButton sendButton = new JButton("Send");
 	private JButton quitButton = new JButton("Quit");
 	
 	BroadcastButtonListener bbl = new BroadcastButtonListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
-	Component[] components = { messages, inputText, broadcastButton, echoButton, quitButton };
+	Component[] components = { messages, inputText, sendButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
 		quitButton.addActionListener(qbl);
-		broadcastButton.addActionListener(bbl);
-		echoButton.addActionListener(new EchoButtonListener());
+		sendButton.addActionListener(bbl);
 
 		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
 														// samma rad
-		buttonPanel.add(broadcastButton);
-		buttonPanel.add(echoButton);
+		buttonPanel.add(sendButton);
 		buttonPanel.add(quitButton);
 
 		messages.setLayout(new GridLayout(0, 1));

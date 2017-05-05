@@ -29,6 +29,7 @@ public class MessageLabel extends JLabel {
 				}
 				inputText.setText(name + ":" + inputText.getText());
 			}
+			inputText.requestFocus();
 		}
 
 		@Override
