@@ -23,7 +23,6 @@ public class ConnectionThread extends Thread {
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			mailbox.addWriter(bw);
-
 			mailbox.broadcast(getName() + " joined"); // Sends a message to
 														// everyone that this
 														// person joined.
@@ -57,20 +56,15 @@ public class ConnectionThread extends Thread {
 			System.exit(1);
 		}
 	}
-	
-	private void sendMessage(String message, BufferedWriter bw) throws IOException {
-		bw.write(message + "\r\n");
-		bw.flush();
-	}
 
 	private void echoMessage(String message, BufferedWriter bw) throws IOException {
 		if (message.length() >= 2) {
-			sendMessage(message.substring(2), bw);
+			ServerMailbox.sendMessage(message.substring(2), bw);
 		}
 	}
 	
 	private void errorMessage(String message, BufferedWriter bw) throws IOException {
-		sendMessage("Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
+		ServerMailbox.sendMessage("Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
 				+ " \"E:\" to echo it or \"Q\" to quit.", bw);
 	}
 }
