@@ -42,6 +42,7 @@ public class ConnectionThread extends Thread {
 					} else if (line.startsWith("P:")) {
 						String name = line.substring(line.indexOf("name=") + 5);
 						String message = br.readLine();
+						ServerMailbox.sendMessage(user.getWriter(), whisperedMessage(message));
 						mailbox.sendMessage(name, whisperMessage(message));
 					} else {
 						errorMessage(line, writer);
@@ -60,7 +61,11 @@ public class ConnectionThread extends Thread {
 	}
 	
 	private String whisperMessage(String message) {
-		return "[" + user.getName() + "]: " + message;
+		return "from [" + user.getName() + "]: " + message;
+	}
+	
+	private String whisperedMessage(String message) {
+		return "to [" + user.getName() + "]: " + message;
 	}
 
 	private void getUserName() {
