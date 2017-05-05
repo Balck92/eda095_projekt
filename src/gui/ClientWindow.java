@@ -171,15 +171,6 @@ public class ClientWindow extends JFrame {
 
 	}
 
-	private class EchoButtonListener extends MessageSender implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			send("E:", inputText.getText());
-		}
-
-	}
-
 	private class WindowCloser extends WindowAdapter {
 
 		@Override
