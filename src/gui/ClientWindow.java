@@ -65,9 +65,7 @@ public class ClientWindow extends JFrame {
 		}
 		messages.setPreferredSize(new Dimension(700, 425));
 		inputText.setPreferredSize(new Dimension(700, 150));
-		inputText.setMaximumSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
-		buttonPanel.setMaximumSize(new Dimension(700, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
 		mainPanel.add(messages);
 		mainPanel.add(inputText);
