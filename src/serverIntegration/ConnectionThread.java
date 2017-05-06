@@ -65,7 +65,7 @@ public class ConnectionThread extends Thread {
 	}
 	
 	private String taggedMessage(String message) {
-		return user.getName() + ": " + message;
+		return String.format("[%s]: %s", user.getName(), message);
 	}
 	
 	private String whisperMessage(String message) {
@@ -113,8 +113,9 @@ public class ConnectionThread extends Thread {
 		}
 	}
 	
-	private boolean illegalName(String userName) {
-		return userName.contains(" ");
+	// Inga spaces eller hakparenteser.
+	public static boolean illegalName(String userName) {
+		return userName.contains(" ") || userName.contains("[") || userName.contains("]");
 	}
 
 	private void echoMessage(String message, Writer bw) {

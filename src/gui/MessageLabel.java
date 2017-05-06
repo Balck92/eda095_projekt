@@ -22,29 +22,39 @@ public class MessageLabel extends JLabel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			String text = getText();
-			String name = "";
-			if (text.contains("[")) {
-				name = text.substring(text.indexOf('[') + 1, text.indexOf(']'));
-			} else if (text.contains(":")) {
-				name = text.substring(0, text.indexOf(':'));
-				if (name.charAt(0) == '[') {
-					name = name.substring(1, name.length() - 1);
-				}
-			}
+			String name = getName(text);
 			whisperToName(name);
 			inputText.requestFocus();
 		}
 		
-		private void whisperToName(String name) {
-			String input = inputText.getText();
-			if (input.startsWith("/w ")) {
-				input = input.substring(3);
-				int messageStart = input.indexOf(' ');
-				if (messageStart == -1)
-					return;
-				input = input.substring(messageStart + 1);
+		private String getName(String s) {
+			if (s.contains("[")) {
+				return s.substring(s.indexOf('[') + 1, s.indexOf(']'));
 			}
-			inputText.setText("/w " + name + " " + input);
+			int nameStart, nameEnd;
+			for (nameStart = 0; nameStart < s.length() && s.charAt(nameStart) == ' '; nameStart++) {}	// Skippa alla space i början.
+			for (nameEnd = nameStart; nameEnd < s.length() && s.charAt(nameEnd) != ' '; nameEnd++) {}	// Hitta nästa space.
+			return s.substring(nameStart, nameEnd);
+		}
+		
+		private void whisperToName(String name) {
+			if (name.isEmpty())	// Gör inget.
+				return;
+			
+			String input = inputText.getText();
+			
+			if (input.startsWith("/w ")) {
+				input = input.substring(3);	// Det efter "/w "
+				int messageStart = input.indexOf(' ');	// Meddelandet börjar efter första space.
+				if (messageStart == -1)	// Inget meddelande
+					return;
+				input = input.substring(messageStart + 1);	// Meddelandet.
+			}
+			setWhisper(name, input);
+		}
+		
+		private void setWhisper(String name, String message) {
+			inputText.setText(String.format("/w %s %s", name, message));
 		}
 
 		@Override
