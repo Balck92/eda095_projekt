@@ -31,7 +31,7 @@ public class ChatServer extends Thread {
 			System.exit(1);
 		}
 		
-		ServerWindow window = new ServerWindow(400, 260, port);
+		ServerWindow window = new ServerWindow(800, 300, port);
 		window.start();
 
 		new Thread() {
@@ -40,7 +40,7 @@ public class ChatServer extends Thread {
 					while (true) {
 						Socket s = ss.accept();		// En ny användare anslöt.
 						User user = new User(s);
-						new ConnectionThread(mailbox, user).start();
+						new ConnectionThread(mailbox, user, window).start();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

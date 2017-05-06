@@ -32,13 +32,7 @@ public class ChatRoom {
 		}
 		latestMessages.addLast(message);
 		for (User user : users.values()) {
-			Writer writer = user.getWriter();
-			try {
-				writer.write(message + "\r\n");
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			sendMessage(user, message);
 		}
 	}
 	
@@ -57,7 +51,7 @@ public class ChatRoom {
 		}
 	}
 	
-	public void sendMessage(String userName, String message) {
+	public synchronized void sendMessage(String userName, String message) {
 		User user = users.get(userName);
 		if (user != null) {
 			sendMessage(user.getWriter(), message);

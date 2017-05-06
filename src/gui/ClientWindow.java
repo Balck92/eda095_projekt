@@ -21,6 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import util.ChatConstants;
+import util.ChatUtil;
+import util.StringPair;
+
 // Klient-fönstret.
 public class ClientWindow extends JFrame {
 	
@@ -160,19 +164,12 @@ public class ClientWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
-			if (text.startsWith("/w ")) {
-				text = text.substring(3);
-				int nameEnd = text.indexOf(' ');
-				String name, message;
-				if (nameEnd == -1) {	// No message
-					name = text;
-					message = "";
-				} else {
-					name = text.substring(0, nameEnd);
-					message = text.substring(nameEnd + 1);
+			if (text.toLowerCase().startsWith(ChatConstants.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
+				StringPair um = ChatUtil.getWhisperNameMessage(text);
+				if (um != null) {
+					send("P:" + um.one + "\r\n", um.two);
 				}
-				send("P:" + name + "\r\n", message);
-			} else if (text.startsWith("/list")) {
+			} else if (text.equalsIgnoreCase(ChatConstants.CHAT_LIST_USERS)) {
 				send("L:");
 			} else {
 				send("M:", inputText.getText());

@@ -5,102 +5,119 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.SocketException;
 
-public class ConnectionThread extends Thread {
+import util.ChatConstants;
 
+public class ConnectionThread extends Thread {
+	
 	private User user;
 	private ChatRoom mailbox;
+	private ServerWindow window;
 
 	private Writer writer;
 	private BufferedReader br;
 
-	public ConnectionThread(ChatRoom mailbox, User user) {
+	public ConnectionThread(ChatRoom mailbox, User user, ServerWindow window) {
 		this.mailbox = mailbox;
 		this.user = user;
+		this.window = window;
 	}
 
 	public void run() {
 		writer = user.getWriter();
 		br = user.getBufferedReader();
-		if (!getUserName()) {
+		if (!readUserName()) {	// Läs namnet, om användaren avbryter stänger vi ner tråden.
 			quit();
 			return;
 		}
 		mailbox.addUser(user);
-		mailbox.broadcast(user.getName() + " joined."); 	// Sends a message to
-		// everyone that this
+		mailbox.broadcast(user.getName() + " joined.");	// Berätta för alla att någon gick med.
 
-		try {
-			while (true) {
-				String line = br.readLine();
-				if (line != null && !line.isEmpty()) {
-					if (line.startsWith("M:")) {
-						mailbox.broadcast(taggedMessage(line.substring(2)));
-					} else if (line.startsWith("E:")) {
-						echoMessage(line, writer);
-					} else if (line.startsWith("Q")) {
-						mailbox.broadcast(user.getName() + " left.");
-						mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
-						quit();
-						return;
-					} else if (line.startsWith("P:")) {
-						line = line.substring(2);
-						String name = line.substring(line.indexOf(":") + 1);
-						String message = br.readLine();
-						if (mailbox.hasUser(name)) {
-							ChatRoom.sendMessage(user.getWriter(), whisperedMessage(name, message));
-							mailbox.sendMessage(name, whisperMessage(message));
-						}
-					} else if (line.startsWith("L:")) {
-						mailbox.listUsersTo(user);
-					} else {
-						errorMessage(line, writer);
-						break;
+		receiveMessages();
+	}
+	
+	private void receiveMessages() {
+		while (true) {	// Ta emot meddelanden och hantera dem.
+			String line = readLine();
+			
+			if (line != null && !line.isEmpty()) {
+				if (line.startsWith(ChatConstants.BROADCAST_MESSAGE)) {
+					mailbox.broadcast(taggedMessage(line.substring(2)));
+				} else if (line.startsWith(ChatConstants.LEAVE)) {
+					mailbox.broadcast(user.getName() + " left.");
+					mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
+					quit();
+					return;
+				} else if (line.startsWith(ChatConstants.PRIVATE_MESSAGE)) {
+					line = line.substring(2);
+					String name = line.substring(line.indexOf(":") + 1);
+					String message = readLine();
+					if (mailbox.hasUser(name)) {
+						ChatRoom.sendMessage(user.getWriter(), receivePrivateMessage(name, message));
+						mailbox.sendMessage(name, sendPrivateMessage(message));
 					}
+				} else if (line.startsWith(ChatConstants.LIST_USERS)) {
+					mailbox.listUsersTo(user);
+				} else {
+					errorMessage(line, writer);
+					break;
 				}
 			}
+		}
+	}
+	
+	private String readLineNoCatch() throws IOException {
+		String mess = br.readLine();
+		window.setLastMessage(mess);
+		return mess;
+	}
+	
+	private String readLine() {
+		try {
+			return readLineNoCatch();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		return null;
+	}
+	
+	private boolean readUserName() {
+		try {
+			String userName = readLineNoCatch();
+			user.setName(userName);
+			while (true) {
+				if (user.getName().length() < 3) {
+					ChatRoom.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
+				} else if (illegalName(userName)) {
+					ChatRoom.sendMessage(writer, ChatServer.NAME_ILLEGAL);
+				} else if (mailbox.hasUser(userName)) {	// Finns redan en användare med det namnet.
+					ChatRoom.sendMessage(writer, ChatServer.NAME_TAKEN);
+				} else {
+					ChatRoom.sendMessage(writer, ChatServer.NAME_OK);
+					return true;
+				}
+				userName = readLineNoCatch();
+				user.setName(userName);
+			}
+		} catch (SocketException e) {	// Användaren stängde av programmet.
+			return false;
+		} catch (IOException e) {		// Annat fel.
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return false;	// Annars klagar java, kommer aldrig hit.
 	}
 	
 	private String taggedMessage(String message) {
 		return String.format("[%s]: %s", user.getName(), message);
 	}
 	
-	private String whisperMessage(String message) {
-		return "from [" + user.getName() + "]: " + message;
+	private String sendPrivateMessage(String message) {
+		return String.format("from [%s]: %s", user.getName(), message);	// Den andra användaren tar emot detta meddelandet.
 	}
 	
-	private String whisperedMessage(String user, String message) {
-		return "to [" + user + "]: " + message;
-	}
-
-	private boolean getUserName() {
-		try {
-			String userName = br.readLine();
-			user.setName(userName);
-			while (true) { // Finns redan en användare med det namnet.
-				if (user.getName().length() < 3) {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
-				} else if (illegalName(userName)) {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_ILLEGAL);
-				} else if (mailbox.hasUser(userName)) {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_TAKEN);
-				} else {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_OK);
-					return true;
-				}
-				userName = br.readLine();
-				user.setName(userName);
-			}
-		} catch (SocketException e) {	// Hamnar här om användaren trycket "avbryt" när man skriver in namn.
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return false;
+	private String receivePrivateMessage(String user, String message) {
+		return String.format("to [%s]: %s", user, message);	// Du själv kommer ta emot detta meddelandet.
 	}
 	
 	private void quit() {
@@ -116,12 +133,6 @@ public class ConnectionThread extends Thread {
 	// Inga spaces eller hakparenteser.
 	public static boolean illegalName(String userName) {
 		return userName.contains(" ") || userName.contains("[") || userName.contains("]");
-	}
-
-	private void echoMessage(String message, Writer bw) {
-		if (message.length() >= 2) {
-			ChatRoom.sendMessage(bw, message.substring(2));
-		}
 	}
 
 	private void errorMessage(String message, Writer bw) {
