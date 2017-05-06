@@ -30,17 +30,18 @@ public class ClientWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static final int START_LINES = 20;
-	
 	private ChatClient client;
-	private List<String> messageList = new ArrayList<String>();
 	
 	// Fönstret
 	private JPanel mainPanel = new JPanel();
-	//private JTextArea messages = new JTextArea();
-	private JPanel messages = new JPanel();
-	private List<JLabel> labelList = new ArrayList<JLabel>();
+
+	// input-rutan.
 	private JTextField inputText = new JTextField();
+	
+	// Meddelandena och användarna.
+	private JPanel upperPanel = new JPanel();
+	private MultiLabel messages = new MessageArea(inputText);
+	//private MultiLabel users = new MultiLabel();
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
@@ -50,7 +51,7 @@ public class ClientWindow extends JFrame {
 	SendButtonListener sbl = new SendButtonListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
-	Component[] components = { messages, inputText, sendButton, quitButton };
+	Component[] components = { upperPanel, inputText, sendButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
@@ -62,16 +63,13 @@ public class ClientWindow extends JFrame {
 		buttonPanel.add(sendButton);
 		buttonPanel.add(quitButton);
 
-		messages.setLayout(new GridLayout(0, 1));
-		for (int i = 0; i < START_LINES; i++) {
-			labelList.add(new MessageLabel(inputText));
-			messages.add(labelList.get(i));
-		}
+		upperPanel.add(messages);
+		upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
 		messages.setPreferredSize(new Dimension(700, 425));
 		inputText.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
-		mainPanel.add(messages);
+		mainPanel.add(upperPanel);
 		mainPanel.add(inputText);
 		mainPanel.add(buttonPanel);
 
@@ -89,7 +87,7 @@ public class ClientWindow extends JFrame {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				resizeMessages();
+				messages.resize();
 			}
 		});
 	}
@@ -100,36 +98,7 @@ public class ClientWindow extends JFrame {
 	}
 	
 	public void addLine(String line) {
-		messageList.add(line);
-		resizeMessages();
-	}
-	
-	private void resizeMessages() {
-		while (messageList.size() >= 100) {
-			messageList.remove(0);
-		}
-		
-		int maxSize = (int) (START_LINES / 350.0 * messages.getHeight());
-		maxSize = maxSize > 30 ? 30 : maxSize;	// Max 30 messages.
-		if (labelList.size() != maxSize) {
-			messages.removeAll();
-			while (labelList.size() < maxSize) {
-				labelList.add(new MessageLabel(inputText));
-			}
-			while (labelList.size() > maxSize) {
-				labelList.remove(labelList.size() - 1);
-			}
-			for (JLabel label : labelList) {
-				messages.add(label);
-			}
-		}
-		
-		for (int i = 0; i < labelList.size(); i++) {
-			int index = messageList.size() - labelList.size() + i;
-			if (index > 0) {
-				labelList.get(i).setText(messageList.get(index));
-			}
-		}
+		messages.addLine(line);
 	}
 	
 	private class KeyboardListener extends MessageSender implements KeyListener {

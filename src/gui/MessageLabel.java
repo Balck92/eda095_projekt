@@ -13,7 +13,7 @@ public class MessageLabel extends JLabel {
 	private JTextField inputText;
 	
 	public MessageLabel(JTextField inputText) {
-		super("-");
+		super();
 		this.inputText = inputText;
 		addMouseListener(new MessageMouseListener());
 	}
