@@ -11,13 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -78,13 +75,12 @@ public class ClientWindow extends JFrame {
 		setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på
 											// skärmen
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		// Gör så att fönstret anropar quit() när det stängs.
-		addWindowListener(new WindowCloser());
+		addWindowListener(new WindowCloser());	// Gör så att fönstret anropar quit() när det stängs.
 		KeyListener keyl = new KeyboardListener();
 		for (Component comp : components) {
 			comp.addKeyListener(keyl);
 		}
-		addComponentListener(new ComponentAdapter() {
+		addComponentListener(new ComponentAdapter() {	// När man ändrar storlek används denna.
 			@Override
 			public void componentResized(ComponentEvent e) {
 				messages.resize();
@@ -111,19 +107,17 @@ public class ClientWindow extends JFrame {
 				client.quit();
 				break;
 			case KeyEvent.VK_ENTER:
-				sbl.actionPerformed(null);
+				sbl.actionPerformed(null);	// Skicka meddelandet i input-rutan.
 				break;
 			}
 		}
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
-			
 		}
 
 		@Override
 		public void keyTyped(KeyEvent arg0) {
-			
 		}
 
 	}
@@ -135,18 +129,19 @@ public class ClientWindow extends JFrame {
 			String text = inputText.getText();
 			if (text.toLowerCase().startsWith(ChatConstants.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
 				StringPair um = ChatUtil.getWhisperNameMessage(text);
-				if (um != null) {
-					send("P:" + um.one + "\r\n", um.two);
+				if (um != null) {	// Om det finns ett namn och ett meddelande
+					send(ChatConstants.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
 				}
 			} else if (text.equalsIgnoreCase(ChatConstants.CHAT_LIST_USERS)) {
-				send("L:");
+				send(ChatConstants.LIST_USERS);
 			} else {
-				send("M:", inputText.getText());
+				send(ChatConstants.BROADCAST_MESSAGE, inputText.getText());
 			}
 		}
 
 	}
 
+	// Används när man klickar på 'x' uppe till höger.
 	private class WindowCloser extends WindowAdapter {
 
 		@Override
@@ -170,6 +165,7 @@ public class ClientWindow extends JFrame {
 			send("", message);
 		}
 
+		// Skickar inget om message är tomt.
 		public void send(String prefix, String message) {
 			inputText.setText("");
 			if (!message.isEmpty()) { // Skicka inte tomma meddelanden.

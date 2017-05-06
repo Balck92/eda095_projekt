@@ -41,8 +41,7 @@ public class MultiLabel extends JPanel {
 	
 	@Override
 	public Component add(Component c) {	// Ska inte kunna lägga till något än JLabel.
-		String s = null;
-		s.length();
+		System.exit(1);
 		return null;
 	}
 	

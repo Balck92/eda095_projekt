@@ -18,6 +18,7 @@ public class ChatClient {
 	private static final String ENTER_HOST_PORT_PROMPT = "Please enter host and port";
 
 	public static void main(String[] args) {
+		System.out.println(Runtime.getRuntime().freeMemory());
 		ChatClient client = new ChatClient();
 		client.start();
 	}
@@ -89,6 +90,7 @@ public class ChatClient {
 		ChatRoom.sendMessage(writer, message);
 	}
 
+	// Säger till servern att kliented stängs ner och stänger sen.
 	public void quit() {
 		try {
 			ChatRoom.sendMessage(writer, "Q");
