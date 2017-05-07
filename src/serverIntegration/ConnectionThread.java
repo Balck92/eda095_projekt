@@ -52,14 +52,14 @@ public class ConnectionThread extends Thread {
 					String name = line.substring(line.indexOf(":") + 1);
 					String message = readLine();
 					if (chatRoom.hasUser(name)) {
-						Communication.sendMessageToClient(user, receivePrivateMessage(name, message));
-						chatRoom.sendMessage(name, sendPrivateMessage(message));
+						Communication.sendMessageToClient(user, receivePrivateMessage(name, message));	// Den som skickar meddelandet får upp texten "to [User]: Message"
+						chatRoom.sendMessage(name, sendPrivateMessage(message));	// Den som tar emot meddelandet får upp texten "from [User]: Message"
 					}
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					chatRoom.listUsersTo(user);
 				} else {
 					errorMessage(line, writer);
-					break;
+					continue;
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public class ConnectionThread extends Thread {
 				userName = readLineNoCatch();
 				user.setName(userName);
 			}
-		} catch (SocketException e) {	// Användaren stängde av programmet.
+		} catch (SocketException e) {	// Användaren stängde av programmet när de valde namn.
 			return false;
 		} catch (IOException e) {		// Annat fel.
 			e.printStackTrace();
