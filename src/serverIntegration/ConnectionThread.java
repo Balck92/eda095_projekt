@@ -10,14 +10,14 @@ import util.Communication;
 public class ConnectionThread extends Thread {
 	
 	private User user;
-	private ChatRoom mailbox;
+	private ChatRoom chatRoom;
 	private ServerWindow window;
 
 	private Writer writer;
 	private BufferedReader br;
 
-	public ConnectionThread(ChatRoom mailbox, User user, ServerWindow window) {
-		this.mailbox = mailbox;
+	public ConnectionThread(ChatRoom chatRoom, User user, ServerWindow window) {
+		this.chatRoom = chatRoom;
 		this.user = user;
 		this.window = window;
 	}
@@ -29,8 +29,8 @@ public class ConnectionThread extends Thread {
 			quit();
 			return;
 		}
-		mailbox.addUser(user);
-		mailbox.broadcast(user.getName() + " joined.");	// Berätta för alla att någon gick med.
+		chatRoom.addUser(user);
+		chatRoom.broadcast(user.getName() + " joined.");	// Berätta för alla att någon gick med.
 
 		receiveMessages();
 	}
@@ -41,22 +41,22 @@ public class ConnectionThread extends Thread {
 			
 			if (line != null && !line.isEmpty()) {
 				if (line.startsWith(Communication.BROADCAST_MESSAGE)) {
-					mailbox.broadcast(taggedMessage(line.substring(2)));
+					chatRoom.broadcast(taggedMessage(line.substring(Communication.BROADCAST_MESSAGE.length())));
 				} else if (line.startsWith(Communication.LEAVE)) {
-					mailbox.broadcast(user.getName() + " left.");
-					mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
+					chatRoom.broadcast(user.getName() + " left.");
+					chatRoom.removeUser(user); // The mailbox should no longer send messages to this user.
 					quit();
 					return;
 				} else if (line.startsWith(Communication.PRIVATE_MESSAGE)) {
-					line = line.substring(2);
+					line = line.substring(Communication.PRIVATE_MESSAGE.length());
 					String name = line.substring(line.indexOf(":") + 1);
 					String message = readLine();
-					if (mailbox.hasUser(name)) {
+					if (chatRoom.hasUser(name)) {
 						Communication.sendMessageToClient(user, receivePrivateMessage(name, message));
-						mailbox.sendMessage(name, sendPrivateMessage(message));
+						chatRoom.sendMessage(name, sendPrivateMessage(message));
 					}
 				} else if (line.startsWith(Communication.LIST_USERS)) {
-					mailbox.listUsersTo(user);
+					chatRoom.listUsersTo(user);
 				} else {
 					errorMessage(line, writer);
 					break;
@@ -90,7 +90,7 @@ public class ConnectionThread extends Thread {
 					Communication.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {
 					Communication.sendMessage(writer, ChatServer.NAME_ILLEGAL);
-				} else if (mailbox.hasUser(userName)) {	// Finns redan en användare med det namnet.
+				} else if (chatRoom.hasUser(userName)) {	// Finns redan en användare med det namnet.
 					Communication.sendMessage(writer, ChatServer.NAME_TAKEN);
 				} else {
 					Communication.sendMessage(writer, ChatServer.NAME_OK);

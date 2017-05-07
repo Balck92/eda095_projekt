@@ -13,7 +13,7 @@ public class ChatServer extends Thread {
 
 	private int port;
 	private ServerSocket ss;
-	private ChatRoom mailbox = new ChatRoom();
+	private ChatRoom chatRoom = new ChatRoom();
 
 	public static void main(String[] args) {
 		new ChatServer(30000).start();
@@ -40,7 +40,7 @@ public class ChatServer extends Thread {
 					while (true) {
 						Socket s = ss.accept();		// En ny användare anslöt.
 						User user = new User(s);
-						new ConnectionThread(mailbox, user, window).start();
+						new ConnectionThread(chatRoom, user, window).start();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

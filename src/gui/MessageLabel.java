@@ -6,6 +6,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import util.Communication;
+
 public class MessageLabel extends JLabel {
 
 	private static final long serialVersionUID = 1L;
@@ -43,8 +45,8 @@ public class MessageLabel extends JLabel {
 			
 			String input = inputText.getText();
 			
-			if (input.startsWith("/w ")) {
-				input = input.substring(3);	// Det efter "/w "
+			if (input.startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {
+				input = input.substring(Communication.CHAT_PRIVATE_MESSAGE.length());	// Det efter "/w "
 				int messageStart = input.indexOf(' ');	// Meddelandet börjar efter första space.
 				if (messageStart == -1)	// Inget meddelande
 					return;
@@ -54,7 +56,7 @@ public class MessageLabel extends JLabel {
 		}
 		
 		private void setWhisper(String name, String message) {
-			inputText.setText(String.format("/w %s %s", name, message));
+			inputText.setText(String.format("%s%s %s", Communication.CHAT_PRIVATE_MESSAGE, name, message));
 		}
 
 		@Override
