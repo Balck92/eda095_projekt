@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import javax.swing.JOptionPane;
 
-import serverIntegration.ChatServer;
+import server.ChatServer;
 import util.Communication;
 
 // Klienten för chatt-programmet.

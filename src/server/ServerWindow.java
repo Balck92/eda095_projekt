@@ -1,4 +1,4 @@
-package serverIntegration;
+package server;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;

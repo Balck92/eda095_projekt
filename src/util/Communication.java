@@ -3,7 +3,7 @@ package util;
 import java.io.IOException;
 import java.io.Writer;
 
-import serverIntegration.User;
+import server.User;
 
 public class Communication {
 

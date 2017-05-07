@@ -1,10 +1,10 @@
-package serverIntegration;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ChatServer extends Thread {
+public class ChatServer {
 	
 	public static final String NAME_TAKEN = "name taken";
 	public static final String NAME_OK = "name ok";
@@ -16,7 +16,7 @@ public class ChatServer extends Thread {
 	private ChatRoom chatRoom = new ChatRoom();
 
 	public static void main(String[] args) {
-		new ChatServer(30000).start();
+		new ChatServer(30000).run();
 	}
 
 	public ChatServer(int port) {
