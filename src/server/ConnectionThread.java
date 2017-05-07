@@ -25,10 +25,12 @@ public class ConnectionThread extends Thread {
 	public void run() {
 		writer = user.getWriter();
 		br = user.getBufferedReader();
+		
 		if (!readUserName()) {	// Läs namnet, om användaren avbryter stänger vi ner tråden.
 			quit();
 			return;
 		}
+		
 		chatRoom.addUser(user);
 		chatRoom.broadcast(user.getName() + " joined.");	// Berätta för alla att någon gick med.
 
@@ -84,20 +86,19 @@ public class ConnectionThread extends Thread {
 	private boolean readUserName() {
 		try {
 			String userName = readLineNoCatch();
-			user.setName(userName);
 			while (true) {
-				if (user.getName().length() < 3) {
-					Communication.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
+				if (userName.length() < 3) {
+					Communication.sendMessage(writer, Server.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {
-					Communication.sendMessage(writer, ChatServer.NAME_ILLEGAL);
+					Communication.sendMessage(writer, Server.NAME_ILLEGAL);
 				} else if (chatRoom.hasUser(userName)) {	// Finns redan en användare med det namnet.
-					Communication.sendMessage(writer, ChatServer.NAME_TAKEN);
+					Communication.sendMessage(writer, Server.NAME_TAKEN);
 				} else {
-					Communication.sendMessage(writer, ChatServer.NAME_OK);
+					user.setName(userName);
+					Communication.sendMessage(writer, Server.NAME_OK);
 					return true;
 				}
 				userName = readLineNoCatch();
-				user.setName(userName);
 			}
 		} catch (SocketException e) {	// Användaren stängde av programmet när de valde namn.
 			return false;

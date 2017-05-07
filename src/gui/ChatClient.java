@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import javax.swing.JOptionPane;
 
-import server.ChatServer;
+import server.Server;
 import util.Communication;
 
 // Klienten för chatt-programmet.
@@ -65,14 +65,14 @@ public class ChatClient {
 					System.exit(0);
 				Communication.sendMessage(writer, name);
 				String response = reader.readLine();
-				if (response.startsWith(ChatServer.NAME_OK)) {
+				if (response.startsWith(Server.NAME_OK)) {
 					window.setTitle(name + " - Chat");
 					return;
-				} else if (response.startsWith(ChatServer.NAME_TAKEN)) {
+				} else if (response.startsWith(Server.NAME_TAKEN)) {
 					showText = "Name \"" + name + "\" is taken. Please enter another name";
-				} else if (response.startsWith(ChatServer.NAME_TOO_SHORT)) {
+				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {
 					showText = "Name \"" + name + "\" is too short. Please enter another name";
-				} else if (response.startsWith(ChatServer.NAME_ILLEGAL)) {
+				} else if (response.startsWith(Server.NAME_ILLEGAL)) {
 					showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
 				} else {
 					System.err.println("Unknown response: " + response);

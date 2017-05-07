@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ChatServer {
+public class Server {
 	
 	public static final String NAME_TAKEN = "name taken";
 	public static final String NAME_OK = "name ok";
@@ -13,13 +13,13 @@ public class ChatServer {
 
 	private int port;
 	private ServerSocket ss;
-	private ChatRoom chatRoom = new ChatRoom();
+	private ChatRoom chatServer = new ChatRoom();
 
 	public static void main(String[] args) {
-		new ChatServer(30000).run();
+		new Server(30000).run();
 	}
 
-	public ChatServer(int port) {
+	public Server(int port) {
 		this.port = port;
 	}
 
@@ -40,7 +40,7 @@ public class ChatServer {
 					while (true) {
 						Socket s = ss.accept();		// En ny användare anslöt.
 						User user = new User(s);
-						new ConnectionThread(chatRoom, user, window).start();
+						new ConnectionThread(chatServer, user, window).start();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
