@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.SocketException;
 
-import util.ChatConstants;
+import util.Communication;
 
 public class ConnectionThread extends Thread {
 	
@@ -40,22 +40,22 @@ public class ConnectionThread extends Thread {
 			String line = readLine();
 			
 			if (line != null && !line.isEmpty()) {
-				if (line.startsWith(ChatConstants.BROADCAST_MESSAGE)) {
+				if (line.startsWith(Communication.BROADCAST_MESSAGE)) {
 					mailbox.broadcast(taggedMessage(line.substring(2)));
-				} else if (line.startsWith(ChatConstants.LEAVE)) {
+				} else if (line.startsWith(Communication.LEAVE)) {
 					mailbox.broadcast(user.getName() + " left.");
 					mailbox.removeUser(user); // The mailbox should no longer send messages to this user.
 					quit();
 					return;
-				} else if (line.startsWith(ChatConstants.PRIVATE_MESSAGE)) {
+				} else if (line.startsWith(Communication.PRIVATE_MESSAGE)) {
 					line = line.substring(2);
 					String name = line.substring(line.indexOf(":") + 1);
 					String message = readLine();
 					if (mailbox.hasUser(name)) {
-						ChatRoom.sendMessage(user.getWriter(), receivePrivateMessage(name, message));
+						Communication.sendMessage(user, receivePrivateMessage(name, message));
 						mailbox.sendMessage(name, sendPrivateMessage(message));
 					}
-				} else if (line.startsWith(ChatConstants.LIST_USERS)) {
+				} else if (line.startsWith(Communication.LIST_USERS)) {
 					mailbox.listUsersTo(user);
 				} else {
 					errorMessage(line, writer);
@@ -87,13 +87,13 @@ public class ConnectionThread extends Thread {
 			user.setName(userName);
 			while (true) {
 				if (user.getName().length() < 3) {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
+					Communication.sendMessage(writer, ChatServer.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_ILLEGAL);
+					Communication.sendMessage(writer, ChatServer.NAME_ILLEGAL);
 				} else if (mailbox.hasUser(userName)) {	// Finns redan en användare med det namnet.
-					ChatRoom.sendMessage(writer, ChatServer.NAME_TAKEN);
+					Communication.sendMessage(writer, ChatServer.NAME_TAKEN);
 				} else {
-					ChatRoom.sendMessage(writer, ChatServer.NAME_OK);
+					Communication.sendMessage(writer, ChatServer.NAME_OK);
 					return true;
 				}
 				userName = readLineNoCatch();
@@ -136,7 +136,7 @@ public class ConnectionThread extends Thread {
 	}
 
 	private void errorMessage(String message, Writer bw) {
-		ChatRoom.sendMessage(bw,
+		Communication.sendMessage(bw,
 				"Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
 						+ " \"E:\" to echo it or \"Q\" to quit.");
 	}

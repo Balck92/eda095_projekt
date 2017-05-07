@@ -1,10 +1,10 @@
 package serverIntegration;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import util.Communication;
 
 // Skickar meddelande till klienterna.
 public class ChatRoom {
@@ -19,9 +19,10 @@ public class ChatRoom {
 			return false;
 		}
 		users.put(user.getName(), user);
-		for (String mess : latestMessages) {
-			sendMessage(user, mess);
+		for (String mess : latestMessages) {	// Skicka de senaste meddelandena.
+			Communication.writeMessage(user, mess);
 		}
+		Communication.flush(user);
 		return true;
 	}
 
@@ -32,39 +33,25 @@ public class ChatRoom {
 		}
 		latestMessages.addLast(message);
 		for (User user : users.values()) {
-			sendMessage(user, message);
-		}
-	}
-	
-	public static void sendMessage(User user, String message) {
-		sendMessage(user.getWriter(), message);
-	}
-
-	// Skickar bara till en.
-	public static void sendMessage(Writer bw, String message) {
-		try {
-			bw.write(message + "\r\n");
-			bw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+			Communication.sendMessage(user, message);
 		}
 	}
 	
 	public synchronized void sendMessage(String userName, String message) {
 		User user = users.get(userName);
 		if (user != null) {
-			sendMessage(user.getWriter(), message);
+			Communication.sendMessage(user.getWriter(), message);
 		}
 	}
 	
 	public synchronized void listUsersTo(User user) {
-		sendMessage(user, "");
-		sendMessage(user, "Userlist:");
+		Communication.writeMessage(user, "");
+		Communication.writeMessage(user, "Userlist:");
 		for (String userName : users.keySet()) {
-			sendMessage(user, "  " + userName);
+			Communication.writeMessage(user, "  " + userName);
 		}
-		sendMessage(user, "");
+		Communication.writeMessage(user, "");
+		Communication.flush(user);
 	}
 	
 	public synchronized boolean hasUser(String name) {

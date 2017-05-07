@@ -55,7 +55,6 @@ public class MultiLabel extends JPanel {
 		if (labelList.size() != maxSize) {
 			super.removeAll();	// Ta bort alla labels.
 			while (labelList.size() < maxSize) {
-				//labelList.add(new MessageLabel(inputTextField));
 				labelList.add(getLabel());
 			}
 			while (labelList.size() > maxSize) {

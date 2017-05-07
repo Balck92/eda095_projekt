@@ -18,7 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import util.ChatConstants;
+import util.Communication;
 import util.ChatUtil;
 import util.StringPair;
 
@@ -127,15 +127,15 @@ public class ClientWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
-			if (text.toLowerCase().startsWith(ChatConstants.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
+			if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
 				StringPair um = ChatUtil.getWhisperNameMessage(text);
 				if (um != null) {	// Om det finns ett namn och ett meddelande
-					send(ChatConstants.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
+					send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
 				}
-			} else if (text.equalsIgnoreCase(ChatConstants.CHAT_LIST_USERS)) {
-				send(ChatConstants.LIST_USERS);
+			} else if (text.equalsIgnoreCase(Communication.CHAT_LIST_USERS)) {
+				send(Communication.LIST_USERS);
 			} else {
-				send(ChatConstants.BROADCAST_MESSAGE, inputText.getText());
+				send(Communication.BROADCAST_MESSAGE, inputText.getText());
 			}
 		}
 

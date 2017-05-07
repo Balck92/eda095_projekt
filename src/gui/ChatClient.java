@@ -10,7 +10,7 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 
 import serverIntegration.ChatServer;
-import serverIntegration.ChatRoom;
+import util.Communication;
 
 // Klienten för chatt-programmet.
 public class ChatClient {
@@ -18,7 +18,6 @@ public class ChatClient {
 	private static final String ENTER_HOST_PORT_PROMPT = "Please enter host and port";
 
 	public static void main(String[] args) {
-		System.out.println(Runtime.getRuntime().freeMemory());
 		ChatClient client = new ChatClient();
 		client.start();
 	}
@@ -64,7 +63,7 @@ public class ChatClient {
 				String name = JOptionPane.showInputDialog(showText);
 				if (name == null)
 					System.exit(0);
-				ChatRoom.sendMessage(writer, name);
+				Communication.sendMessage(writer, name);
 				String response = reader.readLine();
 				if (response.startsWith(ChatServer.NAME_OK)) {
 					window.setTitle(name + " - Chat");
@@ -87,13 +86,13 @@ public class ChatClient {
 	}
 	
 	public void sendMessage(String message) {
-		ChatRoom.sendMessage(writer, message);
+		Communication.sendMessage(writer, message);
 	}
 
 	// Säger till servern att kliented stängs ner och stänger sen.
 	public void quit() {
 		try {
-			ChatRoom.sendMessage(writer, "Q");
+			Communication.sendMessage(writer, "Q");
 			writer.close();
 			reader.close();
 			System.exit(0);
