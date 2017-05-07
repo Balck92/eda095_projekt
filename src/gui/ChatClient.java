@@ -122,10 +122,8 @@ public class ChatClient {
 			if (line.startsWith(Communication.SHOW_MESSAGE)) {
 				window.addLine(line.substring(Communication.SHOW_MESSAGE.length()));
 			} else if (line.startsWith(Communication.USER_JOINED)) {
-				window.addLine(line.substring(Communication.USER_JOINED.length()));
 				window.addUser(line.substring(Communication.USER_JOINED.length()));
 			} else if (line.startsWith(Communication.USER_LEFT)) {
-				window.addLine(line.substring(Communication.USER_LEFT.length()));
 				window.removeUser(line.substring(Communication.USER_LEFT.length()));
 			} else {
 				System.err.println("Unknown message received from server: " + line);

@@ -1,7 +1,9 @@
-package gui;
+package gui.multilabel;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import gui.MessageLabel;
 
 public class MessageArea extends MultiLabel {
 

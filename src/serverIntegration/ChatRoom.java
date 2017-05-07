@@ -18,6 +18,11 @@ public class ChatRoom {
 		if (users.containsKey(user.getName())) {	// Finns redan.
 			return false;
 		}
+		
+		for (String userName : users.keySet()) {
+			Communication.sendUserJoinedMessage(user, userName);
+		}
+		
 		users.put(user.getName(), user);
 		for (String mess : latestMessages) {	// Skicka de senaste meddelandena.
 			Communication.writeMessageToClient(user, mess);
@@ -65,6 +70,9 @@ public class ChatRoom {
 	
 	public synchronized void removeUser(User user) {
 		users.remove(user.getName());
+		for (User u : users.values()) {
+			Communication.sendUserLeftMessage(u, user.getName());
+		}
 	}
 	
 	public String toString() {

@@ -1,4 +1,4 @@
-package gui;
+package gui.multilabel;
 
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -14,8 +14,8 @@ public class MultiLabel extends JPanel {
 	private static final int START_LINES = 20;
 	private static final int MAX_LINES = START_LINES + START_LINES / 2;
 
-	private List<String> messageList = new ArrayList<String>();
-	private List<JLabel> labelList = new ArrayList<JLabel>();	// Listan av text.
+	protected List<String> textList = new ArrayList<String>();
+	protected List<JLabel> labelList = new ArrayList<JLabel>();	// Listan av text.
 	
 	public MultiLabel() {
 		super();
@@ -23,7 +23,7 @@ public class MultiLabel extends JPanel {
 	}
 	
 	protected JLabel getLabel() {
-		return new JLabel();
+		return new JLabel("-");
 	}
 	
 	// Lägg till en label.
@@ -35,12 +35,12 @@ public class MultiLabel extends JPanel {
 	
 	// Lägg till ett meddelande längst ner.
 	public void addLine(String line) {
-		messageList.add(line);
+		textList.add(line);
 		resize();
 	}
 	
 	public void removeLine(String line) {
-		messageList.remove(line);
+		textList.remove(line);
 		resize();
 	}
 	
@@ -51,13 +51,14 @@ public class MultiLabel extends JPanel {
 	}
 	
 	public void resize() {
-		while (messageList.size() >= 100) {
-			messageList.remove(0);
+		while (textList.size() > MAX_LINES) {	// Lagra inte för många meddelanden.
+			textList.remove(0);
 		}
 		
 		int maxSize = (int) (START_LINES / 350.0 * getHeight());
 		maxSize = Math.min(maxSize, MAX_LINES);	// Inte fler meddelanden än MAX_LINES.
-		if (labelList.size() != maxSize) {
+		
+		if (labelList.size() != maxSize) {	// Om vi måste ändra storlek.
 			super.removeAll();	// Ta bort alla labels.
 			while (labelList.size() < maxSize) {
 				labelList.add(getLabel());
@@ -71,9 +72,11 @@ public class MultiLabel extends JPanel {
 		}
 		
 		for (int i = 0; i < labelList.size(); i++) {	// Skriv meddelandena i labels.
-			int index = messageList.size() - labelList.size() + i;
-			if (index > 0) {
-				labelList.get(i).setText(messageList.get(index));
+			int index = textList.size() - labelList.size() + i;
+			if (index >= 0) {	// Finns meddelande att skriva på raden.
+				labelList.get(i).setText(textList.get(index));
+			} else {			// Finns inget meddelande att skriva på raden.
+				labelList.get(i).setText("");
 			}
 		}
 	}

@@ -18,8 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import util.Communication;
+import gui.multilabel.MessageArea;
+import gui.multilabel.MultiLabel;
+import gui.multilabel.UserListArea;
 import util.ChatUtil;
+import util.Communication;
 import util.StringPair;
 
 // Klient-fönstret.
@@ -38,7 +41,7 @@ public class ClientWindow extends JFrame {
 	// Meddelandena och användarna.
 	private JPanel upperPanel = new JPanel();
 	private MultiLabel messages = new MessageArea(inputText);
-	private MultiLabel users = new MultiLabel();
+	private MultiLabel users = new UserListArea();
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();

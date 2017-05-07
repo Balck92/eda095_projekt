@@ -54,8 +54,8 @@ public class Communication {
 		sendMessage(user, Communication.USER_JOINED + userName);
 	}
 	
-	public static void sendUserLeftMessage(User user) {
-		sendMessage(user, Communication.USER_LEFT);
+	public static void sendUserLeftMessage(User user, String userName) {
+		sendMessage(user, Communication.USER_LEFT + userName);
 	}
 	
 	public static void sendMessage(User user, String message) {
