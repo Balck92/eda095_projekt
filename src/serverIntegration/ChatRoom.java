@@ -20,9 +20,14 @@ public class ChatRoom {
 		}
 		users.put(user.getName(), user);
 		for (String mess : latestMessages) {	// Skicka de senaste meddelandena.
-			Communication.writeMessage(user, mess);
+			Communication.writeMessageToClient(user, mess);
 		}
 		Communication.flush(user);
+		
+		for (User u : users.values()) {
+			Communication.sendUserJoinedMessage(u, user.getName());
+		}
+		
 		return true;
 	}
 
@@ -33,24 +38,24 @@ public class ChatRoom {
 		}
 		latestMessages.addLast(message);
 		for (User user : users.values()) {
-			Communication.sendMessage(user, message);
+			Communication.sendMessageToClient(user, message);
 		}
 	}
 	
 	public synchronized void sendMessage(String userName, String message) {
 		User user = users.get(userName);
 		if (user != null) {
-			Communication.sendMessage(user.getWriter(), message);
+			Communication.sendMessageToClient(user, message);
 		}
 	}
 	
 	public synchronized void listUsersTo(User user) {
-		Communication.writeMessage(user, "");
-		Communication.writeMessage(user, "Userlist:");
+		Communication.writeMessageToClient(user, "");
+		Communication.writeMessageToClient(user, "Userlist:");
 		for (String userName : users.keySet()) {
-			Communication.writeMessage(user, "  " + userName);
+			Communication.writeMessageToClient(user, "  " + userName);
 		}
-		Communication.writeMessage(user, "");
+		Communication.writeMessageToClient(user, "");
 		Communication.flush(user);
 	}
 	

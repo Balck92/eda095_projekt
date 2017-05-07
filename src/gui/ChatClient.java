@@ -110,11 +110,26 @@ public class ChatClient {
 				try {
 					String line = reader.readLine();
 					if (line != null) {
-						window.addLine(line);
+						handleLine(line);
 					}
 				} catch (IOException e) {
 					System.exit(0);
 				}
+			}
+		}
+		
+		private void handleLine(String line) {
+			if (line.startsWith(Communication.SHOW_MESSAGE)) {
+				window.addLine(line.substring(Communication.SHOW_MESSAGE.length()));
+			} else if (line.startsWith(Communication.USER_JOINED)) {
+				window.addLine(line.substring(Communication.USER_JOINED.length()));
+				window.addUser(line.substring(Communication.USER_JOINED.length()));
+			} else if (line.startsWith(Communication.USER_LEFT)) {
+				window.addLine(line.substring(Communication.USER_LEFT.length()));
+				window.removeUser(line.substring(Communication.USER_LEFT.length()));
+			} else {
+				System.err.println("Unknown message received from server: " + line);
+				System.exit(1);
 			}
 		}
 	}

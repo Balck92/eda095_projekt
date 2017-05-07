@@ -39,6 +39,11 @@ public class MultiLabel extends JPanel {
 		resize();
 	}
 	
+	public void removeLine(String line) {
+		messageList.remove(line);
+		resize();
+	}
+	
 	@Override
 	public Component add(Component c) {	// Ska inte kunna lägga till något än JLabel.
 		System.exit(1);

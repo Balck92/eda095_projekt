@@ -52,7 +52,7 @@ public class ConnectionThread extends Thread {
 					String name = line.substring(line.indexOf(":") + 1);
 					String message = readLine();
 					if (mailbox.hasUser(name)) {
-						Communication.sendMessage(user, receivePrivateMessage(name, message));
+						Communication.sendMessageToClient(user, receivePrivateMessage(name, message));
 						mailbox.sendMessage(name, sendPrivateMessage(message));
 					}
 				} else if (line.startsWith(Communication.LIST_USERS)) {

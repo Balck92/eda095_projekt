@@ -38,7 +38,7 @@ public class ClientWindow extends JFrame {
 	// Meddelandena och användarna.
 	private JPanel upperPanel = new JPanel();
 	private MultiLabel messages = new MessageArea(inputText);
-	//private MultiLabel users = new MultiLabel();
+	private MultiLabel users = new MultiLabel();
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
@@ -61,8 +61,10 @@ public class ClientWindow extends JFrame {
 		buttonPanel.add(quitButton);
 
 		upperPanel.add(messages);
+		upperPanel.add(users);
 		upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
-		messages.setPreferredSize(new Dimension(700, 425));
+		messages.setPreferredSize(new Dimension(500, 425));
+		users.setPreferredSize(new Dimension(200, 425));
 		inputText.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
@@ -84,6 +86,7 @@ public class ClientWindow extends JFrame {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				messages.resize();
+				users.resize();
 			}
 		});
 	}
@@ -95,6 +98,14 @@ public class ClientWindow extends JFrame {
 	
 	public void addLine(String line) {
 		messages.addLine(line);
+	}
+	
+	public void addUser(String userName) {
+		users.addLine(userName);
+	}
+	
+	public void removeUser(String userName) {
+		users.removeLine(userName);
 	}
 	
 	private class KeyboardListener extends MessageSender implements KeyListener {
