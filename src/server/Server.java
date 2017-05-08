@@ -39,7 +39,7 @@ public class Server {
 				try {
 					while (true) {
 						Socket s = ss.accept();		// En ny användare anslöt.
-						User user = new User(s);
+						User user = new User(s, chatRoom);
 						new ConnectionThread(chatRoom, user, window).start();
 					}
 				} catch (IOException e) {
