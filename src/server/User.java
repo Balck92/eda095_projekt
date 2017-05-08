@@ -14,6 +14,8 @@ public class User {
 	private BufferedReader reader;
 	private Writer writer;
 	
+	private ChatRoom currentRoom;
+	
 	public User(Socket s) {
 		try {
 			reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -55,6 +57,18 @@ public class User {
 	@Override
 	public String toString() {
 		return userName;
+	}
+	
+	public void setCurrentRoom(ChatRoom room) {
+		if (currentRoom != null) {	// Lämna rummet du är i.
+			currentRoom.removeUser(this);
+		}
+		currentRoom = room;
+		room.addUser(this);
+	}
+	
+	public ChatRoom getCurrentRoom() {
+		return currentRoom;
 	}
 	
 	@Override

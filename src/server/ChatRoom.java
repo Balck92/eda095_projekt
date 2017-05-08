@@ -20,7 +20,7 @@ public class ChatRoom {
 		}
 		
 		for (String userName : users.keySet()) {
-			Communication.sendUserJoinedMessage(user, userName);
+			Communication.sendUserJoinedMessage(user, userName);	// Berätta för användaren vilka som är med i rummet.
 		}
 		
 		users.put(user.getName(), user);

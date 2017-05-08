@@ -26,12 +26,13 @@ public class ConnectionThread extends Thread {
 		writer = user.getWriter();
 		br = user.getBufferedReader();
 		
+		// Användaren måste ha ett namn direkt. 
 		if (!readUserName()) {	// Läs namnet, om användaren avbryter stänger vi ner tråden.
 			quit();
 			return;
 		}
 		
-		chatRoom.addUser(user);
+		user.setCurrentRoom(chatRoom);	// Gå med i rummet när du har ett namn.
 		chatRoom.broadcast(user.getName() + " joined.");	// Berätta för alla att någon gick med.
 
 		receiveMessages();
@@ -43,7 +44,7 @@ public class ConnectionThread extends Thread {
 			
 			if (line != null && !line.isEmpty()) {
 				if (line.startsWith(Communication.BROADCAST_MESSAGE)) {
-					chatRoom.broadcast(taggedMessage(line.substring(Communication.BROADCAST_MESSAGE.length())));
+					user.getCurrentRoom().broadcast(taggedMessage(line.substring(Communication.BROADCAST_MESSAGE.length())));
 				} else if (line.startsWith(Communication.LEAVE)) {
 					chatRoom.broadcast(user.getName() + " left.");
 					chatRoom.removeUser(user); // The mailbox should no longer send messages to this user.
@@ -53,12 +54,12 @@ public class ConnectionThread extends Thread {
 					line = line.substring(Communication.PRIVATE_MESSAGE.length());
 					String name = line.substring(line.indexOf(":") + 1);
 					String message = readLine();
-					if (chatRoom.hasUser(name)) {
+					if (user.getCurrentRoom().hasUser(name)) {
 						Communication.sendMessageToClient(user, receivePrivateMessage(name, message));	// Den som skickar meddelandet får upp texten "to [User]: Message"
-						chatRoom.sendMessage(name, sendPrivateMessage(message));	// Den som tar emot meddelandet får upp texten "from [User]: Message"
+						user.getCurrentRoom().sendMessage(name, sendPrivateMessage(message));	// Den som tar emot meddelandet får upp texten "from [User]: Message"
 					}
 				} else if (line.startsWith(Communication.LIST_USERS)) {
-					chatRoom.listUsersTo(user);
+					user.getCurrentRoom().listUsersTo(user);
 				} else {
 					errorMessage(line, writer);
 					continue;
