@@ -142,7 +142,7 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
 			if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
-				StringPair um = ChatUtil.getWhisperNameMessage(text);
+				StringPair um = ChatUtil.getWhisperNameMessage(text);	// Hämta namn och meddelande.
 				if (um != null) {	// Om det finns ett namn och ett meddelande
 					send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
 				}

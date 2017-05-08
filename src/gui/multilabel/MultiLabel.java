@@ -67,11 +67,7 @@ public class MultiLabel extends JPanel {
 				labelList.remove(labelList.size() - 1);
 			}
 			for (JLabel label : labelList) {	// Lägg till rätt antal.
-				if (label == null) {
-					System.err.println("null i lista?");
-				} else {
-					super.add(label);
-				}
+				super.add(label);
 			}
 		}
 		
