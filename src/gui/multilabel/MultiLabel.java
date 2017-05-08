@@ -67,17 +67,22 @@ public class MultiLabel extends JPanel {
 				labelList.remove(labelList.size() - 1);
 			}
 			for (JLabel label : labelList) {	// Lägg till rätt antal.
-				super.add(label);
+				if (label == null) {
+					System.err.println("null i lista?");
+				} else {
+					super.add(label);
+				}
 			}
 		}
 		
+		int index = textList.size() - labelList.size();
 		for (int i = 0; i < labelList.size(); i++) {	// Skriv meddelandena i labels.
-			int index = textList.size() - labelList.size() + i;
 			if (index >= 0) {	// Finns meddelande att skriva på raden.
 				labelList.get(i).setText(textList.get(index));
 			} else {			// Finns inget meddelande att skriva på raden.
 				labelList.get(i).setText("");
 			}
+			index++;
 		}
 	}
 }
