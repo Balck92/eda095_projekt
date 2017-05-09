@@ -8,18 +8,18 @@ import server.User;
 
 public class Communication {
 
-	// Om användaren skriver i chatten.
+	// Om anvï¿½ndaren skriver i chatten.
 	public static final String CHAT_PRIVATE_MESSAGE = "/w ";
 	public static final String CHAT_LIST_USERS = "/list";
 	
-	// Meddelande för att servern ska veta vad den ska göra.
+	// Meddelande fï¿½r att servern ska veta vad den ska gï¿½ra.
 	public static final String BROADCAST_MESSAGE = "M:";
 	public static final String PRIVATE_MESSAGE = "P:";
 	public static final String LEAVE = "Q";
 	public static final String LIST_USERS = "L:";
 	public static final String SEND_IMAGE = "I:";
 	
-	// Meddelanden som klienten får från servern.
+	// Meddelanden som klienten fï¿½r frï¿½n servern.
 	public static final String SHOW_MESSAGE = "S:";
 	public static final String USER_JOINED = "UJ:";
 	public static final String USER_LEFT = "UL:";
@@ -51,7 +51,7 @@ public class Communication {
 		}
 	}
 	
-	// Skicka meddelande att någon gick med.
+	// Skicka meddelande att nï¿½gon gick med.
 	public static void sendUserJoinedMessage(User user, String userName) {
 		sendMessage(user, Communication.USER_JOINED + userName);
 	}
@@ -63,6 +63,12 @@ public class Communication {
 	public static void sendMessage(User user, String message) {
 		sendMessage(user.getWriter(), message);
 	}
+	
+	//public static void sendImage(User user, byte[] array){
+		
+		
+		
+	
 	
 	// Skickar bara till en.
 	public static void sendMessage(Writer writer, String message) {
