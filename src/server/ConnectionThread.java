@@ -44,6 +44,9 @@ public class ConnectionThread extends Thread {
 					sendPrivateMessage(line);
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					user.getCurrentRoom().listUsersTo(user);
+				} else if (line.startsWith(Communication.UPLOAD_IMAGE)) {
+					System.out.println("Tog emot bild");
+					// ...
 				} else {
 					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till användaren.
 					continue;

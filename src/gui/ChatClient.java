@@ -1,9 +1,13 @@
 package gui;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
@@ -24,6 +28,7 @@ public class ChatClient {
 
 	// Kopplingen till servern
 	private Socket s;
+	private OutputStream os;
 	private BufferedWriter writer;
 	private BufferedReader reader;
 
@@ -41,7 +46,8 @@ public class ChatClient {
 				host = host.isEmpty() ? "localhost" : host;
 				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();
 				s = new Socket(host, port);
-				writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+				os = new BufferedOutputStream(s.getOutputStream());
+				writer = new BufferedWriter(new OutputStreamWriter(os));
 				reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				break;
 			} catch (IOException e) {
@@ -54,6 +60,20 @@ public class ChatClient {
 		getUserName();
 		window.open();
 		readThread.start();
+	}
+	
+	public void sendImage(File file) {
+		try {
+			FileInputStream fInput = new FileInputStream(file);
+			for (int c = fInput.read(); c != -1; c = fInput.read()) {
+				os.write(c);
+			}
+			os.flush();
+			fInput.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	private void getUserName() {

@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -178,10 +179,10 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			client.quit();
 		}
-		
+
 	}
-	
-	private class SendImageListener implements ActionListener{
+
+	private class SendImageListener extends MessageSender implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -192,15 +193,18 @@ public class ClientWindow extends JFrame {
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				JFrame frame = new JFrame();
-				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getName());
-		        JLabel imageLabel = new JLabel(image);
-		        imageLabel.setBounds(10, 10, 400, 400);
-		        imageLabel.setVisible(true);
-		        
-		        frame.setSize(900, 600);
-		        frame.add(imageLabel);
-		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		        frame.setVisible(true);
+				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getAbsolutePath());
+				JLabel imageLabel = new JLabel(image);
+				imageLabel.setBounds(10, 10, 400, 400);
+				imageLabel.setVisible(true);
+
+				frame.setSize(900, 600);
+				frame.add(imageLabel);
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setVisible(true);
+
+				send(Communication.UPLOAD_IMAGE);
+				client.sendImage(chooser.getSelectedFile());
 			}
 		}
 
