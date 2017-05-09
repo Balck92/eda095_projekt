@@ -167,6 +167,7 @@ public class ChatClient {
 		}
 	}
 	
+	// Lägger bilden i ett eget fönster.
 	private void receiveImage(String sizeStr) {
 		int size = Integer.parseInt(sizeStr);
 		try {
@@ -190,6 +191,7 @@ public class ChatClient {
 	        imageFrame.pack();
 	        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	        imageFrame.setVisible(true);
+	        imageFrame.setLocationRelativeTo(null);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
