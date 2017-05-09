@@ -193,8 +193,14 @@ public class ClientWindow extends JFrame {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				JFrame frame = new JFrame();
 				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getName());
-		        JLabel imageLabel = new JLabel(image); 
+		        JLabel imageLabel = new JLabel(image);
+		        imageLabel.setBounds(10, 10, 400, 400);
+		        imageLabel.setVisible(true);
+		        
+		        frame.setSize(900, 600);
 		        frame.add(imageLabel);
+		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		        frame.setVisible(true);
 			}
 		}
 
