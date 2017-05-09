@@ -37,6 +37,10 @@ public class ChatRoom {
 		
 		return true;
 	}
+	
+	public synchronized void broadcastImage(byte[] imageData) {
+		
+	}
 
 	// Skickar till alla klienter.
 	public synchronized void broadcast(String message) {

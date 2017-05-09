@@ -17,7 +17,7 @@ public class Communication {
 	public static final String PRIVATE_MESSAGE = "P:";
 	public static final String LEAVE = "Q";
 	public static final String LIST_USERS = "L:";
-	public static final String UPLOAD_IMAGE = "I:";
+	public static final String SEND_IMAGE = "I:";
 	
 	// Meddelanden som klienten får från servern.
 	public static final String SHOW_MESSAGE = "S:";

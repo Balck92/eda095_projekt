@@ -1,8 +1,12 @@
 package server;
 
-import java.io.BufferedReader;
+import java.awt.Image;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+
+import javax.imageio.ImageIO;
 
 import util.Communication;
 
@@ -44,14 +48,31 @@ public class ConnectionThread extends Thread {
 					sendPrivateMessage(line);
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					user.getCurrentRoom().listUsersTo(user);
-				} else if (line.startsWith(Communication.UPLOAD_IMAGE)) {
+				} else if (line.startsWith(Communication.SEND_IMAGE)) {
 					System.out.println("Tog emot bild");
-					// ...
+					receiveImage();
 				} else {
 					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till användaren.
 					continue;
 				}
 			}
+		}
+	}
+
+	private void receiveImage() {
+		try {
+			InputStream is = user.getInputStream();
+
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			for (int c = is.read(); c != -1; c = is.read()) {
+				os.write(c);
+			}
+
+			byte[] imageData = os.toByteArray();
+			user.getCurrentRoom().broadcastImage(imageData);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	

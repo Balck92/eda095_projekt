@@ -203,7 +203,7 @@ public class ClientWindow extends JFrame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 
-				send(Communication.UPLOAD_IMAGE);
+				send(Communication.SEND_IMAGE);
 				client.sendImage(chooser.getSelectedFile());
 			}
 		}

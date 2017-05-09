@@ -1,8 +1,10 @@
 package server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -14,6 +16,7 @@ import util.Communication;
 public class User {
 
 	private String userName;
+	private InputStream is;
 	private BufferedReader br;
 	private Writer writer;
 	
@@ -21,13 +24,18 @@ public class User {
 	
 	public User(Socket s, ChatRoom chatRoom) {
 		try {
-			br = new ServerLogReader(new InputStreamReader(s.getInputStream()));
+			is = new BufferedInputStream(s.getInputStream());
+			br = new ServerLogReader(new InputStreamReader(is));
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			this.currentRoom = chatRoom;
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public InputStream getInputStream() {
+		return is;
 	}
 	
 	public User(String name) {
