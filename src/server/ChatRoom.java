@@ -44,6 +44,7 @@ public class ChatRoom {
 	}
 	
 	public synchronized void broadcastImage(int size, byte[] imageData) {
+		System.out.println("Skickar size: " + size);
 		for (User user : users.values()) {
 			Communication.sendMessage(user, Communication.SEND_IMAGE);
 			OutputStream os = user.getOutputStream();

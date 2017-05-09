@@ -79,6 +79,7 @@ public class ChatClient {
 	        ImageIO.write(image, "jpg", byteArrayOutputStream);
 
 	        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+	        System.out.println("Skickar size: " + byteArrayOutputStream.size());
 	        os.write(size);
 	        os.write(byteArrayOutputStream.toByteArray());
 	        os.flush();
@@ -172,12 +173,13 @@ public class ChatClient {
 	        byte[] sizeAr = new byte[4];
 	        is.read(sizeAr);
 	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+	        
+	        System.out.println("Tog emot size: " + size);
 
 	        byte[] imageData;
 	        try {
 	        	imageData = new byte[size];
 	        } catch (NegativeArraySizeException e) {
-	        	System.out.println(size);
 	        	return;
 	        }
 	        
@@ -186,7 +188,6 @@ public class ChatClient {
 	        
 	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 	        
-	        System.out.println(image.getHeight());
 	        ImageIcon imageIcon = new ImageIcon(image);
 	        
 	        JFrame frame = new JFrame();
@@ -198,6 +199,8 @@ public class ChatClient {
 	        frame.pack();
 	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	        frame.setVisible(true);
+	        
+	        reader.readLine();
 	        
 		} catch (IOException e) {
 			e.printStackTrace();

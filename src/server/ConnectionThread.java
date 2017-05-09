@@ -1,15 +1,9 @@
 package server;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
-
-import javax.imageio.ImageIO;
 
 import util.Communication;
 
@@ -51,7 +45,6 @@ public class ConnectionThread extends Thread {
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					user.getCurrentRoom().listUsersTo(user);
 				} else if (line.startsWith(Communication.SEND_IMAGE)) {
-					System.out.println("Tog emot bild");
 					receiveImage();
 				} else {
 					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till användaren.
@@ -68,9 +61,11 @@ public class ConnectionThread extends Thread {
 	        byte[] sizeAr = new byte[4];
 	        inputStream.read(sizeAr);
 	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+	        
+	        System.out.println("Tog emot size: " + size);
 
 	        byte[] imageData = new byte[size];
-	        inputStream.read(imageData);
+	        for (int pos = 0; pos < size; pos += inputStream.read(imageData, pos, size - pos)) {}
 	        
 			user.getCurrentRoom().broadcastImage(size, imageData);
 		} catch (IOException e) {
