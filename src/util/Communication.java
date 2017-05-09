@@ -64,12 +64,6 @@ public class Communication {
 		sendMessage(user.getWriter(), message);
 	}
 	
-	//public static void sendImage(User user, byte[] array){
-		
-		
-		
-	
-	
 	// Skickar bara till en.
 	public static void sendMessage(Writer writer, String message) {
 		try {

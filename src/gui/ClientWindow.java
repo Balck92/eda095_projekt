@@ -54,7 +54,7 @@ public class ClientWindow extends JFrame {
 	private JButton quitButton = new JButton("Quit");
 	
 	SendButtonListener sbl = new SendButtonListener();
-	SendImageListener sibl = new SendImageListener();
+	SendImageButtonListener sibl = new SendImageButtonListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
 	Component[] components = { upperPanel, inputText, sendButton, sendImageButton, quitButton };
@@ -175,30 +175,29 @@ public class ClientWindow extends JFrame {
 	private class QuitButtonListener implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			client.quit();
 		}
 
 	}
 
-	private class SendImageListener extends MessageSender implements ActionListener {
+	private class SendImageButtonListener extends MessageSender implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent ae) {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			    "JPG Images", "jpg");
 			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				send(Communication.SEND_IMAGE);
 				try {
+					
 					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
 				} catch (IOException e) {
 					e.printStackTrace();
 					System.exit(1);
 				}
-
 			}
 		}
 

@@ -163,9 +163,6 @@ public class ChatClientGUI {
 
 	}
 	
-	
-	
-
 	private class EchoButtonListener implements ActionListener {
 
 		@Override

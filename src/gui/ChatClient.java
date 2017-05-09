@@ -75,13 +75,13 @@ public class ChatClient {
 	
 	public void sendImage(BufferedImage image) {
 		try {
-	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	        ImageIO.write(image, "jpg", byteArrayOutputStream);
-
-	        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-	        System.out.println("Skickar size: " + byteArrayOutputStream.size());
-	        os.write(size);
-	        os.write(byteArrayOutputStream.toByteArray());
+			// Gör om bilden till en array av bytes.
+	        ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
+	        ImageIO.write(image, "jpg", bytesStream);
+	        
+	        // Skicka storleken och arrayn.
+			Communication.sendMessage(writer, Communication.SEND_IMAGE + bytesStream.size());
+	        os.write(bytesStream.toByteArray());
 	        os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,19 +93,19 @@ public class ChatClient {
 		try {
 			String showText = "Please enter your name";
 			while (true) {
-				String name = JOptionPane.showInputDialog(showText);
-				if (name == null)
+				String name = JOptionPane.showInputDialog(showText);	// Namnet användaren har valt.
+				if (name == null)	// Om de avbryter blir namnet null.
 					System.exit(0);
-				Communication.sendMessage(writer, name);
-				String response = reader.readLine();
-				if (response.startsWith(Server.NAME_OK)) {
+				Communication.sendMessage(writer, name);	// Skicka förslag på namn till servern.
+				String response = reader.readLine();		// Serverns svar.
+				if (response.startsWith(Server.NAME_OK)) {	// OK namn.
 					window.setTitle(name + " - Chat");
 					return;
-				} else if (response.startsWith(Server.NAME_TAKEN)) {
+				} else if (response.startsWith(Server.NAME_TAKEN)) {	// Någon annan har redan namnet.
 					showText = "Name \"" + name + "\" is taken. Please enter another name";
-				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {
+				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {	// Namnet är för kort
 					showText = "Name \"" + name + "\" is too short. Please enter another name";
-				} else if (response.startsWith(Server.NAME_ILLEGAL)) {
+				} else if (response.startsWith(Server.NAME_ILLEGAL)) {	// Namnet innehåller tecken som ' ' eller '['
 					showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
 				} else {
 					System.err.println("Unknown response: " + response);
@@ -137,9 +137,9 @@ public class ChatClient {
 
 	// Tråd som läser input från servern.
 	private class InputReaderThread extends Thread {
-
+		
 		public void run() {
-			while (true) {
+			while (true) {	// Läs input från servern hela tiden.
 				try {
 					String line = reader.readLine();
 					if (line != null) {
@@ -160,48 +160,36 @@ public class ChatClient {
 			} else if (line.startsWith(Communication.USER_LEFT)) {
 				window.removeUser(line.substring(Communication.USER_LEFT.length()));
 			} else if (line.startsWith(Communication.SEND_IMAGE)) {
-				receiveImage();
-			} else {
+				receiveImage(line.substring(Communication.SEND_IMAGE.length()));
+			} else {	// Okänt meddelande.
 				System.err.println("Unknown message received from server: " + line);
-				//System.exit(1);
 			}
 		}
 	}
 	
-	private void receiveImage() {
+	private void receiveImage(String sizeStr) {
+		int size = Integer.parseInt(sizeStr);
 		try {
-	        byte[] sizeAr = new byte[4];
-	        is.read(sizeAr);
-	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			// Läs in bilddata.
+	        byte[] imageData = new byte[size];
+	        for (int pos = 0; pos < size; pos += is.read(imageData, pos, size - pos)) {}
 	        
-	        System.out.println("Tog emot size: " + size);
-
-	        byte[] imageData;
-	        try {
-	        	imageData = new byte[size];
-	        } catch (NegativeArraySizeException e) {
-	        	return;
-	        }
-	        
-	        int pos;
-	        for (pos = 0; pos < size; pos += is.read(imageData, pos, size - pos)) {}
-	        
-	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
-	        
+	        // Skapa bilden.
+	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
+	        BufferedImage image = ImageIO.read(bytesStream);
 	        ImageIcon imageIcon = new ImageIcon(image);
-	        
-	        JFrame frame = new JFrame();
+
+	        // Skapa en label som innehåller bilden (labeln kommer att visa bilden).
 	        JLabel imageLabel = new JLabel(imageIcon);
 	        imageLabel.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 	        imageLabel.setVisible(true);
 	        
-	        frame.add(imageLabel);
-	        frame.pack();
-	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	        frame.setVisible(true);
-	        
-	        reader.readLine();
-	        
+	        // Skapa ett fönster som bilden kommer ligga i.
+	        JFrame imageFrame = new JFrame();
+	        imageFrame.add(imageLabel);
+	        imageFrame.pack();
+	        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	        imageFrame.setVisible(true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

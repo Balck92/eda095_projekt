@@ -43,16 +43,13 @@ public class ChatRoom {
 		return true;
 	}
 	
-	public synchronized void broadcastImage(int size, byte[] imageData) {
-		System.out.println("Skickar size: " + size);
+	public synchronized void broadcastImage(byte[] imageData) {
 		for (User user : users.values()) {
-			Communication.sendMessage(user, Communication.SEND_IMAGE);
+			// Berätta för klienten att de får en bild och skicka storleken på bilden.
+			Communication.sendMessage(user, Communication.SEND_IMAGE + imageData.length);
 			OutputStream os = user.getOutputStream();
-
-	        byte[] sizeAr = ByteBuffer.allocate(4).putInt(size).array();
 	        try {
-	        	os.write(sizeAr);
-	        	os.write(imageData);
+	        	os.write(imageData);	// Skicka bilden.
 	        	os.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
