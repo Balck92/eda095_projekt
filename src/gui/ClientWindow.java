@@ -30,20 +30,20 @@ import util.ChatUtil;
 import util.Communication;
 import util.StringPair;
 
-// Klient-fönstret.
+// Klient-fï¿½nstret.
 public class ClientWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private ChatClient client;
 	
-	// Fönstret
+	// Fï¿½nstret
 	private JPanel mainPanel = new JPanel();
 
 	// input-rutan.
 	private JTextField inputText = new JTextField();
 	
-	// Meddelandena och användarna.
+	// Meddelandena och anvï¿½ndarna.
 	private JPanel upperPanel = new JPanel();
 	private MultiLabel messages = new MessageArea(inputText);
 	private MultiLabel users = new UserListArea();
@@ -66,7 +66,7 @@ public class ClientWindow extends JFrame {
 		sendImageButton.addActionListener(sibl);
 		sendButton.addActionListener(sbl);
 
-		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
+		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger pï¿½
 														// samma rad
 		buttonPanel.add(sendButton);
 		buttonPanel.add(sendImageButton);
@@ -79,22 +79,22 @@ public class ClientWindow extends JFrame {
 		users.setPreferredSize(new Dimension(200, 425));
 		inputText.setPreferredSize(new Dimension(700, 150));
 		buttonPanel.setPreferredSize(new Dimension(700, 100));
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lägger dem under varandra
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); // Lï¿½gger dem under varandra
 		mainPanel.add(upperPanel);
 		mainPanel.add(inputText);
 		mainPanel.add(buttonPanel);
 
 		add(mainPanel);
 		pack();
-		setLocationRelativeTo(null); // Gör så att fönstret hamnar mitt på
-											// skärmen
+		setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar mitt pï¿½
+											// skï¿½rmen
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new WindowCloser());	// Gör så att fönstret anropar quit() när det stängs.
+		addWindowListener(new WindowCloser());	// Gï¿½r sï¿½ att fï¿½nstret anropar quit() nï¿½r det stï¿½ngs.
 		KeyListener keyl = new KeyboardListener();
 		for (Component comp : components) {
 			comp.addKeyListener(keyl);
 		}
-		addComponentListener(new ComponentAdapter() {	// När man ändrar storlek används denna.
+		addComponentListener(new ComponentAdapter() {	// Nï¿½r man ï¿½ndrar storlek anvï¿½nds denna.
 			@Override
 			public void componentResized(ComponentEvent e) {
 				messages.resize();
@@ -151,7 +151,7 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String text = inputText.getText();
 			if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
-				StringPair um = ChatUtil.getWhisperNameMessage(text);	// Hämta namn och meddelande.
+				StringPair um = ChatUtil.getWhisperNameMessage(text);	// Hï¿½mta namn och meddelande.
 				if (um != null) {	// Om det finns ett namn och ett meddelande
 					send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
 				}
@@ -164,7 +164,7 @@ public class ClientWindow extends JFrame {
 
 	}
 
-	// Används när man klickar på 'x' uppe till höger.
+	// Anvï¿½nds nï¿½r man klickar pï¿½ 'x' uppe till hï¿½ger.
 	private class WindowCloser extends WindowAdapter {
 
 		@Override
@@ -194,6 +194,7 @@ public class ClientWindow extends JFrame {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				JFrame frame = new JFrame();
 				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getAbsolutePath());
+
 				JLabel imageLabel = new JLabel(image);
 				imageLabel.setBounds(10, 10, 400, 400);
 				imageLabel.setVisible(true);
@@ -205,6 +206,7 @@ public class ClientWindow extends JFrame {
 
 				send(Communication.SEND_IMAGE);
 				client.sendImage(chooser.getSelectedFile());
+
 			}
 		}
 
@@ -216,7 +218,7 @@ public class ClientWindow extends JFrame {
 			send("", message);
 		}
 
-		// Skickar inget om message är tomt.
+		// Skickar inget om message ï¿½r tomt.
 		public void send(String prefix, String message) {
 			inputText.setText("");
 			if (!message.isEmpty()) { // Skicka inte tomma meddelanden. 

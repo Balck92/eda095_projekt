@@ -1,5 +1,7 @@
 package server;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -9,7 +11,7 @@ import util.Communication;
 // Skickar meddelande till klienterna.
 public class ChatRoom {
 
-	// Mappar från namn till Writer.
+	// Mappar frï¿½n namn till Writer.
 	private Map<String, User> users = new HashMap<String, User>();
 	private static final int MAX_MESSAGES_STORED = 10;
 	private LinkedList<String> latestMessages = new LinkedList<String>();
@@ -20,7 +22,7 @@ public class ChatRoom {
 		}
 		
 		for (String userName : users.keySet()) {
-			Communication.sendUserJoinedMessage(user, userName);	// Berätta för användaren vilka som är med i rummet.
+			Communication.sendUserJoinedMessage(user, userName);	// Berï¿½tta fï¿½r anvï¿½ndaren vilka som ï¿½r med i rummet.
 		}
 		
 		users.put(user.getName(), user);
@@ -37,6 +39,17 @@ public class ChatRoom {
 	}
 	
 	public synchronized void broadcastImage(byte[] imageData) {
+		for (User user : users.values()){
+			OutputStream os = user.getOutputStream();
+			try {
+				os.write(imageData);
+				os.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
+		}
 		
 	}
 
