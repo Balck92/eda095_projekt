@@ -109,9 +109,7 @@ public class ConnectionThread extends Thread {
 		return String.format("to [%s]: %s", user, message);	// Du själv kommer ta emot detta meddelandet.
 	}
 	
-	private void errorMessage(String message, Writer bw) {
-		Communication.sendMessage(bw,
-				"Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"
-						+ " \"E:\" to echo it or \"Q\" to quit.");
+	private void errorMessage(String message, Writer writer) {
+		Communication.sendMessage(writer, "Message \"" + message + "\" was not sent.");
 	}
 }

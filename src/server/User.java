@@ -15,6 +15,7 @@ import java.net.SocketException;
 
 import util.Communication;
 
+
 public class User {
 
 	private String userName;
@@ -30,7 +31,7 @@ public class User {
 			is = new BufferedInputStream(s.getInputStream());
 			br = new ServerLogReader(new InputStreamReader(is));
 			os = new BufferedOutputStream(s.getOutputStream());
-			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(os));
 			
 			this.currentRoom = chatRoom;
 		} catch (IOException e) {
@@ -82,14 +83,6 @@ public class User {
 		return userName.contains(" ") || userName.contains("[") || userName.contains("]");
 	}
 	
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof User) {
-			return ((User) other).userName.equals(userName);
-		}
-		return false;
-	}
-	
 	public String getName() {
 		return userName;
 	}
@@ -123,11 +116,6 @@ public class User {
 		return writer;
 	}
 	
-	@Override
-	public String toString() {
-		return userName;
-	}
-	
 	public void setCurrentRoom(ChatRoom room) {
 		if (currentRoom != null) {	// L�mna rummet du �r i.
 			leaveCurrentRoom();
@@ -150,6 +138,19 @@ public class User {
 		Communication.sendMessage(writer, Server.NAME_OK);
 		currentRoom.addUser(this);
 		currentRoom.broadcast(userName + " joined.");	// Ber�tta f�r alla att n�gon gick med.
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof User) {
+			return ((User) other).userName.equals(userName);
+		}
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return userName;
 	}
 	
 	@Override

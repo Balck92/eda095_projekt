@@ -25,13 +25,6 @@ public class MultiLabel extends JPanel {
 		return new JLabel("");
 	}
 	
-	// Lägg till en label.
-	public Component add(JLabel label) {
-		super.add(label);
-		labelList.add(label);
-		return label;
-	}
-	
 	// Lägg till ett meddelande längst ner.
 	public void addLine(String line) {
 		if (textList.size() >= MAX_LINES) {	// Lagra inte för många meddelanden.
