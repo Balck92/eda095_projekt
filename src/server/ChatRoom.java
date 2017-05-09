@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import util.Communication;
 
 // Skickar meddelande till klienterna.

@@ -14,9 +14,11 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import gui.multilabel.MessageArea;
 import gui.multilabel.MultiLabel;
@@ -46,21 +48,25 @@ public class ClientWindow extends JFrame {
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
 	private JButton sendButton = new JButton("Send");
+	private JButton sendImageButton = new JButton("Send image");
 	private JButton quitButton = new JButton("Quit");
 	
 	SendButtonListener sbl = new SendButtonListener();
+	SendImageListener sibl = new SendImageListener();
 	QuitButtonListener qbl = new QuitButtonListener();
 	
-	Component[] components = { upperPanel, inputText, sendButton, quitButton };
+	Component[] components = { upperPanel, inputText, sendButton, sendImageButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
 		quitButton.addActionListener(qbl);
+		sendImageButton.addActionListener(sibl);
 		sendButton.addActionListener(sbl);
 
 		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger på
 														// samma rad
 		buttonPanel.add(sendButton);
+		buttonPanel.add(sendImageButton);
 		buttonPanel.add(quitButton);
 
 		upperPanel.add(messages);
@@ -172,6 +178,23 @@ public class ClientWindow extends JFrame {
 		}
 		
 	}
+	
+	private class SendImageListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser chooser = new JFileChooser();
+		    //FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		    //    "JPG & GIF Images", "jpg", "gif");
+		    //chooser.setFileFilter(filter);
+		    int returnVal = chooser.showOpenDialog(mainPanel);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		       System.out.println("You chose to open this file: " +
+		            chooser.getSelectedFile().getName());
+		    }
+		}
+		
+	}
 
 	private class MessageSender {
 		
@@ -182,7 +205,7 @@ public class ClientWindow extends JFrame {
 		// Skickar inget om message är tomt.
 		public void send(String prefix, String message) {
 			inputText.setText("");
-			if (!message.isEmpty()) { // Skicka inte tomma meddelanden.
+			if (!message.isEmpty()) { // Skicka inte tomma meddelanden. 
 				client.sendMessage(prefix + message);
 			}
 		}
