@@ -188,7 +188,7 @@ public class ClientWindow extends JFrame {
 		    //    "JPG & GIF Images", "jpg", "gif");
 		    //chooser.setFileFilter(filter);
 		    int returnVal = chooser.showOpenDialog(mainPanel);
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    if (returnVal == JFileChooser.APPROVE_OPTION) {
 		       System.out.println("You chose to open this file: " +
 		            chooser.getSelectedFile().getName());
 		    }
