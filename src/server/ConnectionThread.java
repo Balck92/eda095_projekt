@@ -1,10 +1,13 @@
 package server;
 
-import java.awt.Image;
-import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
@@ -27,7 +30,6 @@ public class ConnectionThread extends Thread {
 			user.closeConnection();
 			return;
 		}
-		
 
 		receiveMessages();
 	}
@@ -61,15 +63,16 @@ public class ConnectionThread extends Thread {
 
 	private void receiveImage() {
 		try {
-			InputStream is = user.getInputStream();
+	        InputStream inputStream = user.getInputStream();
 
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			for (int c = is.read(); c != -1; c = is.read()) {
-				os.write(c);
-			}
+	        byte[] sizeAr = new byte[4];
+	        inputStream.read(sizeAr);
+	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
 
-			byte[] imageData = os.toByteArray();
-			user.getCurrentRoom().broadcastImage(imageData);
+	        byte[] imageData = new byte[size];
+	        inputStream.read(imageData);
+	        
+			user.getCurrentRoom().broadcastImage(size, imageData);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

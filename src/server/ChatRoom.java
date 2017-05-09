@@ -1,10 +1,15 @@
 package server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import util.Communication;
 
@@ -38,19 +43,21 @@ public class ChatRoom {
 		return true;
 	}
 	
-	public synchronized void broadcastImage(byte[] imageData) {
-		for (User user : users.values()){
+	public synchronized void broadcastImage(int size, byte[] imageData) {
+		for (User user : users.values()) {
+			Communication.sendMessage(user, Communication.SEND_IMAGE);
 			OutputStream os = user.getOutputStream();
-			try {
-				os.write(imageData);
-				os.flush();
+
+	        byte[] sizeAr = ByteBuffer.allocate(4).putInt(size).array();
+	        try {
+	        	os.write(sizeAr);
+	        	os.write(imageData);
+	        	os.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
-			
 		}
-		
 	}
 
 	// Skickar till alla klienter.

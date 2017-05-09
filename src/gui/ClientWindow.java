@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -192,20 +193,13 @@ public class ClientWindow extends JFrame {
 			//chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				JFrame frame = new JFrame();
-				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getAbsolutePath());
-
-				JLabel imageLabel = new JLabel(image);
-				imageLabel.setBounds(10, 10, 400, 400);
-				imageLabel.setVisible(true);
-
-				frame.setSize(900, 600);
-				frame.add(imageLabel);
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.setVisible(true);
-
 				send(Communication.SEND_IMAGE);
-				client.sendImage(chooser.getSelectedFile());
+				try {
+					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
 
 			}
 		}

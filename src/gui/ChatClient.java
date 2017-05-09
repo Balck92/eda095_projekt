@@ -1,16 +1,25 @@
 package gui;
 
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import server.Server;
@@ -28,6 +37,7 @@ public class ChatClient {
 
 	// Kopplingen till servern
 	private Socket s;
+	private InputStream is;
 	private OutputStream os;
 	private BufferedWriter writer;
 	private BufferedReader reader;
@@ -46,9 +56,10 @@ public class ChatClient {
 				host = host.isEmpty() ? "localhost" : host;
 				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();
 				s = new Socket(host, port);
+				is = new BufferedInputStream(s.getInputStream());
 				os = new BufferedOutputStream(s.getOutputStream());
 				writer = new BufferedWriter(new OutputStreamWriter(os));
-				reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+				reader = new BufferedReader(new InputStreamReader(is));
 				break;
 			} catch (IOException e) {
 				userInput.show("Couldn't connect. " + ENTER_HOST_PORT_PROMPT);
@@ -62,14 +73,15 @@ public class ChatClient {
 		readThread.start();
 	}
 	
-	public void sendImage(File file) {
+	public void sendImage(BufferedImage image) {
 		try {
-			FileInputStream fInput = new FileInputStream(file);
-			for (int c = fInput.read(); c != -1; c = fInput.read()) {
-				os.write(c);
-			}
-			os.flush();
-			fInput.close();
+	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+	        ImageIO.write(image, "jpg", byteArrayOutputStream);
+
+	        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+	        os.write(size);
+	        os.write(byteArrayOutputStream.toByteArray());
+	        os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -138,6 +150,7 @@ public class ChatClient {
 			}
 		}
 		
+		// Tar hand om raden från servern.
 		private void handleLine(String line) {
 			if (line.startsWith(Communication.SHOW_MESSAGE)) {
 				window.addLine(line.substring(Communication.SHOW_MESSAGE.length()));
@@ -145,10 +158,50 @@ public class ChatClient {
 				window.addUser(line.substring(Communication.USER_JOINED.length()));
 			} else if (line.startsWith(Communication.USER_LEFT)) {
 				window.removeUser(line.substring(Communication.USER_LEFT.length()));
+			} else if (line.startsWith(Communication.SEND_IMAGE)) {
+				receiveImage();
 			} else {
 				System.err.println("Unknown message received from server: " + line);
-				System.exit(1);
+				//System.exit(1);
 			}
+		}
+	}
+	
+	private void receiveImage() {
+		try {
+	        byte[] sizeAr = new byte[4];
+	        is.read(sizeAr);
+	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+
+	        byte[] imageData;
+	        try {
+	        	imageData = new byte[size];
+	        } catch (NegativeArraySizeException e) {
+	        	System.out.println(size);
+	        	return;
+	        }
+	        
+	        int pos;
+	        for (pos = 0; pos < size; pos += is.read(imageData, pos, size - pos)) {}
+	        
+	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+	        
+	        System.out.println(image.getHeight());
+	        ImageIcon imageIcon = new ImageIcon(image);
+	        
+	        JFrame frame = new JFrame();
+	        JLabel imageLabel = new JLabel(imageIcon);
+	        imageLabel.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+	        imageLabel.setVisible(true);
+	        
+	        frame.add(imageLabel);
+	        frame.pack();
+	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	        frame.setVisible(true);
+	        
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
