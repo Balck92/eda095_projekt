@@ -12,21 +12,15 @@ public class ConnectionThread extends Thread {
 	private User user;
 	private ServerWindow window;
 
-	private Writer writer;
-	private BufferedReader br;
-
 	public ConnectionThread(ChatRoom chatRoom, User user, ServerWindow window) {
 		this.user = user;
 		this.window = window;
 	}
 
 	public void run() {
-		writer = user.getWriter();
-		br = user.getBufferedReader();
-		
 		// Användaren måste ha ett namn direkt. 
 		if (!user.readUserName()) {	// Läs namnet, om användaren avbryter stänger vi ner tråden.
-			quit();
+			user.closeConnection();
 			return;
 		}
 		
@@ -44,14 +38,14 @@ public class ConnectionThread extends Thread {
 					user.getCurrentRoom().broadcast(taggedMessage(line.substring(Communication.BROADCAST_MESSAGE.length())));
 				} else if (line.startsWith(Communication.LEAVE)) {
 					user.leaveCurrentRoom();
-					quit();
+					user.closeConnection();
 					return;
 				} else if (line.startsWith(Communication.PRIVATE_MESSAGE)) {
 					sendPrivateMessage(line);
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					user.getCurrentRoom().listUsersTo(user);
 				} else {
-					errorMessage(line, writer);
+					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till användaren.
 					continue;
 				}
 			}
@@ -70,7 +64,7 @@ public class ConnectionThread extends Thread {
 	}
 	
 	private String readLineNoCatch() throws IOException {
-		String mess = br.readLine();
+		String mess = user.getBufferedReader().readLine();
 		window.setLastMessage(mess);
 		return mess;
 	}
@@ -98,16 +92,6 @@ public class ConnectionThread extends Thread {
 		return String.format("to [%s]: %s", user, message);	// Du själv kommer ta emot detta meddelandet.
 	}
 	
-	private void quit() {
-		try {
-			writer.close();
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
 	private void errorMessage(String message, Writer bw) {
 		Communication.sendMessage(bw,
 				"Message \"" + message + "\" was not sent. Start your message with \"M:\" to broadcast it,"

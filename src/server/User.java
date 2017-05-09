@@ -21,7 +21,7 @@ public class User {
 	
 	public User(Socket s, ChatRoom chatRoom) {
 		try {
-			br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			br = new ServerLogReader(new InputStreamReader(s.getInputStream()));
 			writer = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			this.currentRoom = chatRoom;
 		} catch (IOException e) {
@@ -79,6 +79,23 @@ public class User {
 	
 	public void setName(String name) {
 		userName = name;
+	}
+	
+	// Stänger Readern och Writern och sätter dem till null så att vi inte kan använda dem igen.
+	public void closeConnection() {
+		try {
+			if (br != null) {
+				br.close();
+				br = null;
+			}
+			if (writer != null) {
+				writer.close();
+				writer = null;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	public BufferedReader getBufferedReader() {

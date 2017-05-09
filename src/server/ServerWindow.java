@@ -19,18 +19,7 @@ public class ServerWindow {
 	private static final String PORT_LABEL_TEXT = "Running on port %d.";
 	private static final String ONLINE_LABEL_TEXT = "Server has been online for %s.";
 	private static final String LAST_MESSAGE_LABEL_TEXT = "Last message received was \"%s\" %s ago.";
-	private static final String SERVER_LOG_FILE_PATH = "log_server.txt";
 	
-	private static Writer logWriter;
-	static {
-		try {
-			logWriter = new BufferedWriter(new FileWriter(SERVER_LOG_FILE_PATH));
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
 	private JFrame frame = new JFrame();
 	private JButton quitButton = new JButton("Quit");
 	private JLabel portLabel;
@@ -46,7 +35,7 @@ public class ServerWindow {
 		portLabel = new JLabel(String.format(PORT_LABEL_TEXT, port));
 	}
 
-	public void start() {
+	public void show() {
 		frame.setTitle("Chat Server");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -73,17 +62,6 @@ public class ServerWindow {
 	public void setLastMessage(String message) {
 		timeLastMessage = System.currentTimeMillis();
 		lastMessage = message;
-		logLine(message);
-	}
-	
-	private void logLine(String line) {
-		try {
-			logWriter.write(line + "\r\n");
-			logWriter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
 	}
 	
 	private String minSecSince(long time) {
