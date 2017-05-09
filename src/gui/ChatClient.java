@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -50,11 +49,12 @@ public class ChatClient {
 		UserInputWindow userInput = new UserInputWindow();
 		userInput.show(ENTER_HOST_PORT_PROMPT);
 		
+		// Fråga användaren efter en host och port till de anger något som går att ansluta till.
 		while (true) {
 			try {
 				String host = userInput.getHost();
-				host = host.isEmpty() ? "localhost" : host;
-				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();
+				host = host.isEmpty() ? "localhost" : host;		// Om man lämnar host-rutan tom ansluter den till localhost.
+				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();	// Default-port är 30000.
 				s = new Socket(host, port);
 				is = new BufferedInputStream(s.getInputStream());
 				os = new BufferedOutputStream(s.getOutputStream());

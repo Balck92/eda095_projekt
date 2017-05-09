@@ -53,17 +53,13 @@ public class ClientWindow extends JFrame {
 	private JButton sendImageButton = new JButton("Send image");
 	private JButton quitButton = new JButton("Quit");
 	
-	SendButtonListener sbl = new SendButtonListener();
-	SendImageButtonListener sibl = new SendImageButtonListener();
-	QuitButtonListener qbl = new QuitButtonListener();
-	
 	Component[] components = { upperPanel, inputText, sendButton, sendImageButton, quitButton };
 	
 	public ClientWindow(ChatClient client) {
 		this.client = client;
-		quitButton.addActionListener(qbl);
-		sendImageButton.addActionListener(sibl);
-		sendButton.addActionListener(sbl);
+		quitButton.addActionListener(new QuitButtonListener());
+		sendImageButton.addActionListener(new SendImageButtonListener());
+		sendButton.addActionListener(new SendButtonListener());
 
 		buttonPanel.setLayout(new GridLayout(1, 0)); // Knapparna ligger pï¿½
 														// samma rad
@@ -102,6 +98,32 @@ public class ClientWindow extends JFrame {
 		});
 	}
 	
+	private void sendInputText() {
+		String text = inputText.getText();
+		if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
+			StringPair um = ChatUtil.getWhisperNameMessage(text);	// Hï¿½mta namn och meddelande.
+			if (um != null) {	// Om det finns ett namn och ett meddelande
+				send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
+			}
+		} else if (text.equalsIgnoreCase(Communication.CHAT_LIST_USERS)) {
+			send(Communication.LIST_USERS);
+		} else {
+			send(Communication.BROADCAST_MESSAGE, inputText.getText());
+		}
+	}
+	
+	public void send(String message) {
+		send("", message);
+	}
+
+	// Skickar inget om message ï¿½r tomt.
+	public void send(String prefix, String message) {
+		inputText.setText("");
+		if (!message.isEmpty()) { // Skicka inte tomma meddelanden. 
+			client.sendMessage(prefix + message);
+		}
+	}
+	
 	public void open() {
 		inputText.requestFocus();
 		setVisible(true);
@@ -118,8 +140,9 @@ public class ClientWindow extends JFrame {
 	public void removeUser(String userName) {
 		users.removeLine(userName);
 	}
-	
-	private class KeyboardListener extends MessageSender implements KeyListener {
+
+	// Lyssnar på tangentbordet.
+	private class KeyboardListener implements KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
@@ -129,7 +152,7 @@ public class ClientWindow extends JFrame {
 				client.quit();
 				break;
 			case KeyEvent.VK_ENTER:
-				sbl.actionPerformed(null);	// Skicka meddelandet i input-rutan.
+				sendInputText();	// Skicka meddelandet i input-rutan.
 				break;
 			}
 		}
@@ -143,25 +166,6 @@ public class ClientWindow extends JFrame {
 		}
 
 	}
-	
-	private class SendButtonListener extends MessageSender implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String text = inputText.getText();
-			if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
-				StringPair um = ChatUtil.getWhisperNameMessage(text);	// Hï¿½mta namn och meddelande.
-				if (um != null) {	// Om det finns ett namn och ett meddelande
-					send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
-				}
-			} else if (text.equalsIgnoreCase(Communication.CHAT_LIST_USERS)) {
-				send(Communication.LIST_USERS);
-			} else {
-				send(Communication.BROADCAST_MESSAGE, inputText.getText());
-			}
-		}
-
-	}
 
 	// Anvï¿½nds nï¿½r man klickar pï¿½ 'x' uppe till hï¿½ger.
 	private class WindowCloser extends WindowAdapter {
@@ -170,18 +174,19 @@ public class ClientWindow extends JFrame {
 		public void windowClosing(WindowEvent e) {
 			client.quit();
 		}
+
 	}
 	
-	private class QuitButtonListener implements ActionListener {
+	private class SendButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			client.quit();
+			sendInputText();
 		}
 
 	}
-
-	private class SendImageButtonListener extends MessageSender implements ActionListener {
+	
+	private class SendImageButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent ae) {
@@ -192,7 +197,6 @@ public class ClientWindow extends JFrame {
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				try {
-					
 					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -203,18 +207,12 @@ public class ClientWindow extends JFrame {
 
 	}
 
-	private class MessageSender {
-		
-		public void send(String message) {
-			send("", message);
+	private class QuitButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			client.quit();
 		}
 
-		// Skickar inget om message ï¿½r tomt.
-		public void send(String prefix, String message) {
-			inputText.setText("");
-			if (!message.isEmpty()) { // Skicka inte tomma meddelanden. 
-				client.sendMessage(prefix + message);
-			}
-		}
 	}
 }
