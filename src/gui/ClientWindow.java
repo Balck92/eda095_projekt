@@ -11,14 +11,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import gui.multilabel.MessageArea;
 import gui.multilabel.MultiLabel;
@@ -184,16 +186,18 @@ public class ClientWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser chooser = new JFileChooser();
-		    //FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		    //    "JPG & GIF Images", "jpg", "gif");
-		    //chooser.setFileFilter(filter);
-		    int returnVal = chooser.showOpenDialog(mainPanel);
-		    if (returnVal == JFileChooser.APPROVE_OPTION) {
-		       System.out.println("You chose to open this file: " +
-		            chooser.getSelectedFile().getName());
-		    }
+			//FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			//    "JPG & GIF Images", "jpg", "gif");
+			//chooser.setFileFilter(filter);
+			int returnVal = chooser.showOpenDialog(mainPanel);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				JFrame frame = new JFrame();
+				ImageIcon image = new ImageIcon(chooser.getSelectedFile().getName());
+		        JLabel imageLabel = new JLabel(image); 
+		        frame.add(imageLabel);
+			}
 		}
-		
+
 	}
 
 	private class MessageSender {
