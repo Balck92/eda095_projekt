@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,9 +81,6 @@ public class ClientWindow extends JFrame {
 		mainPanel.add(buttonPanel);
 
 		add(mainPanel);
-		pack();
-		setLocationRelativeTo(null); // Gï¿½r sï¿½ att fï¿½nstret hamnar mitt pï¿½
-											// skï¿½rmen
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowCloser());	// Gï¿½r sï¿½ att fï¿½nstret anropar quit() nï¿½r det stï¿½ngs.
 		KeyListener keyl = new KeyboardListener();
@@ -126,7 +124,14 @@ public class ClientWindow extends JFrame {
 	
 	public void open() {
 		inputText.requestFocus();
-		setVisible(true);
+		pack();
+		setLocationRelativeTo(null); // Lägger fönstret mitt på skärmen
+		EventQueue.invokeLater(new Runnable() {	// Skulle förhindra något fel med EventDispatch-tråden
+			@Override
+			public void run() {
+				setVisible(true);
+			}
+		});
 	}
 	
 	public void addLine(String line) {

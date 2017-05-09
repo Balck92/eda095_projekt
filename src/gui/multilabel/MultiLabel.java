@@ -2,8 +2,7 @@ package gui.multilabel;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,8 +13,8 @@ public class MultiLabel extends JPanel {
 	private static final int START_LINES = 20;
 	private static final int MAX_LINES = START_LINES + START_LINES / 2;
 
-	protected List<String> textList = new ArrayList<String>();
-	protected List<JLabel> labelList = new ArrayList<JLabel>();	// Listan av text.
+	protected LinkedList<String> textList = new LinkedList<String>();
+	protected LinkedList<JLabel> labelList = new LinkedList<JLabel>();	// Listan av text.
 	
 	public MultiLabel() {
 		super();
@@ -23,7 +22,7 @@ public class MultiLabel extends JPanel {
 	}
 	
 	protected JLabel getLabel() {
-		return new JLabel("-");
+		return new JLabel("");
 	}
 	
 	// Lägg till en label.
@@ -35,6 +34,9 @@ public class MultiLabel extends JPanel {
 	
 	// Lägg till ett meddelande längst ner.
 	public void addLine(String line) {
+		if (textList.size() >= MAX_LINES) {	// Lagra inte för många meddelanden.
+			textList.removeFirst();
+		}
 		textList.add(line);
 		resize();
 	}
@@ -51,34 +53,25 @@ public class MultiLabel extends JPanel {
 	}
 	
 	public void resize() {
-		while (textList.size() > MAX_LINES) {	// Lagra inte för många meddelanden.
-			textList.remove(0);
-		}
+		int size = (int) (START_LINES / 350.0 * getHeight());	// Hur många JLabels vi ska ha i fönstret.
+		size = Math.min(size, MAX_LINES);	// Inte fler meddelanden än MAX_LINES.
 		
-		int maxSize = (int) (START_LINES / 350.0 * getHeight());
-		maxSize = Math.min(maxSize, MAX_LINES);	// Inte fler meddelanden än MAX_LINES.
-		
-		if (labelList.size() != maxSize) {	// Om vi måste ändra storlek.
-			super.removeAll();	// Ta bort alla labels.
-			while (labelList.size() < maxSize) {
-				labelList.add(getLabel());
+		if (labelList.size() != size) {	// Om vi måste ändra storlek.
+			while (labelList.size() < size) {	// Om fönstret blev större.
+				JLabel label = getLabel();		// Lägg till en ny label.
+				labelList.addFirst(label);
+				super.add(label, 0);
 			}
-			while (labelList.size() > maxSize) {
-				labelList.remove(labelList.size() - 1);
-			}
-			for (JLabel label : labelList) {	// Lägg till rätt antal.
-				super.add(label);
+			while (labelList.size() > size) {	// Om fönstret förminskades.
+				labelList.removeFirst();
+				super.remove(0);
 			}
 		}
 		
-		int index = textList.size() - labelList.size();
-		for (int i = 0; i < labelList.size(); i++) {	// Skriv meddelandena i labels.
-			if (index >= 0) {	// Finns meddelande att skriva på raden.
-				labelList.get(i).setText(textList.get(index));
-			} else {			// Finns inget meddelande att skriva på raden.
-				labelList.get(i).setText("");
-			}
-			index++;
+		// Skriv meddelandena i labels.
+		for (int i = Math.max(0, labelList.size() - textList.size()); i < labelList.size(); i++) {
+			int index = textList.size() - labelList.size() + i;
+			labelList.get(i).setText(textList.get(index));
 		}
 	}
 }
