@@ -10,7 +10,7 @@ import java.io.Writer;
 // Läser meddelande och skriver ut dem till log-filen.
 public class ServerLogReader extends BufferedReader {
 	
-	private static final String SERVER_LOG_FILE_PATH = "log_server";
+	private static final String SERVER_LOG_FILE_PATH = "log_server.txt";
 	
 	private Writer logWriter;
 	
