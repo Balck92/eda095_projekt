@@ -11,18 +11,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import gui.multilabel.MessageArea;
 import gui.multilabel.MultiLabel;
@@ -183,14 +181,14 @@ public class ClientWindow extends JFrame {
 
 	}
 
-	private class SendImageListener extends MessageSender implements ActionListener{
+	private class SendImageListener extends MessageSender implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser chooser = new JFileChooser();
-			//FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			//    "JPG & GIF Images", "jpg", "gif");
-			//chooser.setFileFilter(filter);
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			    "JPG Images", "jpg");
+			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				send(Communication.SEND_IMAGE);
