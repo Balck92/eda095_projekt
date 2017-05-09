@@ -1,9 +1,9 @@
 # EDA095 projekt - Chat
 
 ## Förslag på förbättringar
- - Använda HTTP istället för TCP (byta Socket mot URL)
+ - ✖ Använda HTTP istället för TCP (byta Socket mot URL)
  - ✔ Användarlista (uppdateras när någon går med eller lämnar)
- - Chattrum
+ - ✖ Chattrum
  - ✔ Privata meddelanden
  - ✔ Gränssnitt som går att ändra storlek på (fixa Layouts)
  - ✔ Skicka bilder (ny knapp)
