@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-// Servern består av ett chattrum, en ServerSocket och ett fönster.
+// Servern bestï¿½r av ett chattrum, en ServerSocket och ett fï¿½nster.
 public class Server {
 	
 	public static final String NAME_TAKEN = "name taken";
@@ -18,7 +18,7 @@ public class Server {
 	private ServerWindow window;
 
 	public static void main(String[] args) {
-		new Server(30000).run();	// Startar en server på port 30000.
+		new Server(80).run();	// Startar en server pï¿½ port 30000.
 	}
 
 	public Server(int port) {
@@ -34,19 +34,19 @@ public class Server {
 		}
 		
 		window = new ServerWindow(800, 300, port);
-		window.show();	// Visar fönstret.
+		window.show();	// Visar fï¿½nstret.
 
 		new ServerThread().start();
 	}
 	
-	// En tråd som accepterar nya användare och lägger till dem.
+	// En trï¿½d som accepterar nya anvï¿½ndare och lï¿½gger till dem.
 	private class ServerThread extends Thread {
 		public void run() {
 			try {
 				while (true) {
-					Socket s = ss.accept();		// En ny användare anslöt.
+					Socket s = ss.accept();		// En ny anvï¿½ndare anslï¿½t.
 					User user = new User(s, chatRoom);
-					Thread userThread = new ConnectionThread(chatRoom, user, window);	//  för varje användare.
+					Thread userThread = new ConnectionThread(chatRoom, user, window);	//  fï¿½r varje anvï¿½ndare.
 					userThread.start();
 				}
 			} catch (IOException e) {

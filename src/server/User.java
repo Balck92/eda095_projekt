@@ -36,23 +36,26 @@ public class User {
 	
 	public boolean readUserName() {
 		try {
-			String userName = br.readLine();	// Läs namn
+			String userName="";
+			while((userName=br.readLine())!=null){
+				System.out.println(userName);
+			}
 			while (true) {
-				if (userName.length() < 3) {	// För kort.
+				if (userName.length() < 3) {	// Fï¿½r kort.
 					Communication.sendMessage(writer, Server.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {	// Olagliga tecken.
 					Communication.sendMessage(writer, Server.NAME_ILLEGAL);
-				} else if (currentRoom.hasUser(userName)) {	// Finns redan en användare med det namnet.
+				} else if (currentRoom.hasUser(userName)) {	// Finns redan en anvï¿½ndare med det namnet.
 					Communication.sendMessage(writer, Server.NAME_TAKEN);
 				} else {	// OK namn.
 					this.userName = userName;
 					joinCurrentRoom();
 					return true;
 				}
-				userName = br.readLine();	// Läs ett nytt namn.
+				userName = br.readLine();	// Lï¿½s ett nytt namn.
 			}
-		} catch (SocketException e) {	// Användaren stängde av programmet när de valde namn.
-			return false;				// Returnerar false så att klienten vet att den ska stänga av.
+		} catch (SocketException e) {	// Anvï¿½ndaren stï¿½ngde av programmet nï¿½r de valde namn.
+			return false;				// Returnerar false sï¿½ att klienten vet att den ska stï¿½nga av.
 		} catch (IOException e) {		// Annat fel.
 			e.printStackTrace();
 			System.exit(1);
@@ -81,7 +84,7 @@ public class User {
 		userName = name;
 	}
 	
-	// Stänger Readern och Writern och sätter dem till null så att vi inte kan använda dem igen.
+	// Stï¿½nger Readern och Writern och sï¿½tter dem till null sï¿½ att vi inte kan anvï¿½nda dem igen.
 	public void closeConnection() {
 		try {
 			if (br != null) {
@@ -112,7 +115,7 @@ public class User {
 	}
 	
 	public void setCurrentRoom(ChatRoom room) {
-		if (currentRoom != null) {	// Lämna rummet du är i.
+		if (currentRoom != null) {	// Lï¿½mna rummet du ï¿½r i.
 			leaveCurrentRoom();
 		}
 		currentRoom = room;
@@ -128,11 +131,11 @@ public class User {
 		currentRoom.removeUser(this); // The mailbox should no longer send messages to this user.
 	}
 	
-	// Berättar för rummet att vi gick med.
+	// Berï¿½ttar fï¿½r rummet att vi gick med.
 	private void joinCurrentRoom() {
 		Communication.sendMessage(writer, Server.NAME_OK);
 		currentRoom.addUser(this);
-		currentRoom.broadcast(userName + " joined.");	// Berätta för alla att någon gick med.
+		currentRoom.broadcast(userName + " joined.");	// Berï¿½tta fï¿½r alla att nï¿½gon gick med.
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import java.io.Writer;
 
 import util.Communication;
 
-// En tråd körs för varje användare som är uppkopplad till servern.
+// En trï¿½d kï¿½rs fï¿½r varje anvï¿½ndare som ï¿½r uppkopplad till servern.
 public class ConnectionThread extends Thread {
 	
 	private User user;
@@ -18,8 +18,8 @@ public class ConnectionThread extends Thread {
 	}
 
 	public void run() {
-		// Användaren måste ha ett namn direkt. 
-		if (!user.readUserName()) {	// Läs namnet, om användaren avbryter stänger vi ner tråden.
+		// Anvï¿½ndaren mï¿½ste ha ett namn direkt. 
+		if (!user.readUserName()) {	// Lï¿½s namnet, om anvï¿½ndaren avbryter stï¿½nger vi ner trï¿½den.
 			user.closeConnection();
 			return;
 		}
@@ -28,11 +28,11 @@ public class ConnectionThread extends Thread {
 		receiveMessages();
 	}
 	
-	// Tar emot meddelanden från användaren till de stänger ner klienten.
+	// Tar emot meddelanden frï¿½n anvï¿½ndaren till de stï¿½nger ner klienten.
 	private void receiveMessages() {
 		while (true) {	// Ta emot meddelanden och hantera dem.
 			String line = readLine();
-			
+			System.out.println(line);
 			if (line != null && !line.isEmpty()) {
 				if (line.startsWith(Communication.BROADCAST_MESSAGE)) {
 					user.getCurrentRoom().broadcast(taggedMessage(line.substring(Communication.BROADCAST_MESSAGE.length())));
@@ -45,21 +45,21 @@ public class ConnectionThread extends Thread {
 				} else if (line.startsWith(Communication.LIST_USERS)) {
 					user.getCurrentRoom().listUsersTo(user);
 				} else {
-					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till användaren.
+					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till anvï¿½ndaren.
 					continue;
 				}
 			}
 		}
 	}
 	
-	// Den första raden innehåller användaren man vill skicka till. Den andra raden är meddelandet.
+	// Den fï¿½rsta raden innehï¿½ller anvï¿½ndaren man vill skicka till. Den andra raden ï¿½r meddelandet.
 	private void sendPrivateMessage(String firstLine) {
 		firstLine = firstLine.substring(Communication.PRIVATE_MESSAGE.length());
 		String name = firstLine.substring(firstLine.indexOf(":") + 1);
-		String message = readLine();	// Den andra raden innehåller meddelandet.
+		String message = readLine();	// Den andra raden innehï¿½ller meddelandet.
 		if (user.getCurrentRoom().hasUser(name)) {
-			Communication.sendMessageToClient(user, sendPrivateMessage(name, message));	// Den som skickar meddelandet får upp texten "to [User]: Message"
-			user.getCurrentRoom().sendMessage(name, receivePrivateMessage(message));	// Den som tar emot meddelandet får upp texten "from [User]: Message"
+			Communication.sendMessageToClient(user, sendPrivateMessage(name, message));	// Den som skickar meddelandet fï¿½r upp texten "to [User]: Message"
+			user.getCurrentRoom().sendMessage(name, receivePrivateMessage(message));	// Den som tar emot meddelandet fï¿½r upp texten "from [User]: Message"
 		}
 	}
 	
@@ -79,17 +79,17 @@ public class ConnectionThread extends Thread {
 		return null;
 	}
 	
-	// Sätter användarens namn framför meddelandet.
+	// Sï¿½tter anvï¿½ndarens namn framfï¿½r meddelandet.
 	private String taggedMessage(String message) {
 		return String.format("[%s]: %s", user.getName(), message);
 	}
 	
 	private String receivePrivateMessage(String message) {
-		return String.format("from [%s]: %s", user.getName(), message);	// Den andra användaren tar emot detta meddelandet.
+		return String.format("from [%s]: %s", user.getName(), message);	// Den andra anvï¿½ndaren tar emot detta meddelandet.
 	}
 	
 	private String sendPrivateMessage(String user, String message) {
-		return String.format("to [%s]: %s", user, message);	// Du själv kommer ta emot detta meddelandet.
+		return String.format("to [%s]: %s", user, message);	// Du sjï¿½lv kommer ta emot detta meddelandet.
 	}
 	
 	private void errorMessage(String message, Writer bw) {
