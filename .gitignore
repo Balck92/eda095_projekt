@@ -1,3 +1,10 @@
 bin/
 *.class
 log*
+out/
+.metadata/
+.idea/
+.classpath
+.project
+*.iml
+_config.yml
