@@ -80,6 +80,12 @@ public class ServerWindow {
 				if (lastMessage != null) {
 					lastMessageLabel.setText(String.format(LAST_MESSAGE_LABEL_TEXT, lastMessage, minSecSince(timeLastMessage)));
 				}
+				try {
+					synchronized (this) {	// Behövs för att det inte ska krascha, vet inte varför.
+						wait(1000);	// Vänta 1 sekund innan servern kolla tiden igen.
+					}
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 		

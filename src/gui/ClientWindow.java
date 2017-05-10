@@ -20,7 +20,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -80,6 +82,13 @@ public class ClientWindow extends JFrame {
 		mainPanel.add(upperPanel);
 		mainPanel.add(inputText);
 		mainPanel.add(buttonPanel);
+		/*JLabel label = new JLabel("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkhueigwgkaaaaaaaa");
+		JScrollPane scroll = new JScrollPane(label);
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new GridLayout(1, 1, 10, 10));
+		bottomPanel.add(scroll);
+		bottomPanel.setPreferredSize(new Dimension(700, 50));
+		mainPanel.add(bottomPanel);*/
 
 		add(mainPanel);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
