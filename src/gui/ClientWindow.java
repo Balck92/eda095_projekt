@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -126,12 +127,20 @@ public class ClientWindow extends JFrame {
 		inputText.requestFocus();
 		pack();
 		setLocationRelativeTo(null); // Lägger fönstret mitt på skärmen
-		EventQueue.invokeLater(new Runnable() {	// Skulle förhindra något fel med EventDispatch-tråden
-			@Override
-			public void run() {
-				setVisible(true);
-			}
-		});
+		try {
+			EventQueue.invokeAndWait(new Runnable() {	// Skulle förhindra något fel med EventDispatch-tråden
+				@Override
+				public void run() {
+					setVisible(true);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	public void addLine(String line) {
