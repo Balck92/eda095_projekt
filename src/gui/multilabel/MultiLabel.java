@@ -62,9 +62,12 @@ public class MultiLabel extends JPanel {
 		}
 		
 		// Skriv meddelandena i labels.
-		for (int i = Math.max(0, labelList.size() - textList.size()); i < labelList.size(); i++) {
+		for (int i = 0; i < labelList.size(); i++) {
 			int index = textList.size() - labelList.size() + i;
-			labelList.get(i).setText(textList.get(index));
+			if (index >= 0)	// Om det finns ett meddelande att visa på raden.
+				labelList.get(i).setText(textList.get(index));
+			else			// Om det inte finns något meddelande på raden.
+				labelList.get(i).setText("");
 		}
 	}
 }
