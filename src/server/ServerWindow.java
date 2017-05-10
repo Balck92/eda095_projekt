@@ -81,7 +81,7 @@ public class ServerWindow {
 					lastMessageLabel.setText(String.format(LAST_MESSAGE_LABEL_TEXT, lastMessage, minSecSince(timeLastMessage)));
 				}
 				try {
-					synchronized (this) {	// Behövs för att det inte ska krascha, vet inte varför.
+					synchronized (this) {	// Tråden måste äga sin egen moniter för att få vänta.
 						wait(1000);	// Vänta 1 sekund innan servern kolla tiden igen.
 					}
 				} catch (InterruptedException e) {
