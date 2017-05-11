@@ -12,17 +12,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -48,7 +47,7 @@ public class ClientWindow extends JFrame {
 	
 	// Meddelandena och anv�ndarna.
 	private JPanel upperPanel = new JPanel();
-	private MultiLabel messages = new MessageArea(inputText);
+	private MessageArea messages = new MessageArea(inputText);
 	private MultiLabel users = new UserListArea();
 
 	// Knappar
@@ -154,6 +153,24 @@ public class ClientWindow extends JFrame {
 	
 	public void addLine(String line) {
 		messages.addLine(line);
+	}
+	
+	public void addImage(BufferedImage image) {
+		ImageIcon imageIcon = new ImageIcon(image);
+
+		messages.addImage(image);
+        /*// Skapa en label som inneh�ller bilden (labeln kommer att visa bilden).
+        JLabel imageLabel = new JLabel(imageIcon);
+        imageLabel.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+        imageLabel.setVisible(true);
+        
+        // Skapa ett f�nster som bilden kommer ligga i.
+        JFrame imageFrame = new JFrame();
+        imageFrame.add(imageLabel);
+        imageFrame.pack();
+        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        imageFrame.setVisible(true);
+        imageFrame.setLocationRelativeTo(null);*/
 	}
 	
 	public void addUser(String userName) {

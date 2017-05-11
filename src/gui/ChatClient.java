@@ -203,24 +203,12 @@ public class ChatClient {
 	        if (image == null) {
 	        	System.err.println("Bild som klient tog mot �r null");
 	        }
-	        ImageIcon imageIcon = new ImageIcon(image);
-
-	        // Skapa en label som inneh�ller bilden (labeln kommer att visa bilden).
-	        JLabel imageLabel = new JLabel(imageIcon);
-	        imageLabel.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
-	        imageLabel.setVisible(true);
 	        
-	        // Skapa ett f�nster som bilden kommer ligga i.
-	        JFrame imageFrame = new JFrame();
-	        imageFrame.add(imageLabel);
-	        imageFrame.pack();
-	        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	        imageFrame.setVisible(true);
-	        imageFrame.setLocationRelativeTo(null);
+	        window.addImage(image);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
-
+	
 }

@@ -1,5 +1,8 @@
 package gui.multilabel;
 
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -19,5 +22,11 @@ public class MessageArea extends MultiLabel {
 	@Override
 	protected JLabel getLabel() {
 		return new MessageLabel(inputTextField);
+	}
+	
+	public void addImage(Image image) {
+		ImageIcon imageIcon = new ImageIcon(image);
+
+		labelList.getLast().setIcon(imageIcon);
 	}
 }
