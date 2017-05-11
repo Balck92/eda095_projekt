@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 public class MultiLabel extends JPanel {
 
 	private static final long serialVersionUID = 1L;	// ?
-	private static final int START_LINES = 20;
+	private static final int START_LINES = 5;
 	private static final int MAX_LINES = START_LINES + START_LINES / 2;
 
 	protected LinkedList<Object> extendedList = new LinkedList<Object>();
@@ -41,7 +41,7 @@ public class MultiLabel extends JPanel {
 	}
 	
 	@Override
-	public Component add(Component c) {	// Ska inte kunna lägga till något än JLabel.
+	public Component add(Component c) {	// Ska inte kunna lägga till något annat än JLabel.
 		System.exit(1);
 		return null;
 	}
