@@ -215,7 +215,7 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent ae) {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			    "JPG Images", "jpg");
+			    "Images", "jpg", "png");
 			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {

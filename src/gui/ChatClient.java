@@ -78,10 +78,13 @@ public class ChatClient {
 	public void sendImage(File imageFile) {
 		try {
 			BufferedImage image = ImageIO.read(imageFile);
+			System.out.println(imageFile.getName());
+			String[] nameSeparated = imageFile.getName().split("\\.");
+			String extension = nameSeparated[nameSeparated.length - 1];
 			
 			// Gör om bilden till en array av bytes.
 	        ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
-	        if (!ImageIO.write(image, "jpg", bytesStream)) {	// Kunde inte läsa.
+	        if (!ImageIO.write(image, extension, bytesStream)) {	// Kunde inte läsa.
 	        	System.err.println("Could not read image " + imageFile.getAbsolutePath());
 	        	return;
 	        }
