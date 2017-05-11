@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -8,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -73,11 +75,16 @@ public class ChatClient {
 		readThread.start();
 	}
 	
-	public void sendImage(BufferedImage image) {
+	public void sendImage(File imageFile) {
 		try {
+			BufferedImage image = ImageIO.read(imageFile);
+			
 			// Gör om bilden till en array av bytes.
 	        ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
-	        ImageIO.write(image, "jpg", bytesStream);
+	        if (!ImageIO.write(image, "jpg", bytesStream)) {	// Kunde inte läsa.
+	        	System.err.println("Could not read image " + imageFile.getAbsolutePath());
+	        	return;
+	        }
 	        
 	        // Skicka storleken och arrayn.
 			Communication.sendMessage(writer, Communication.SEND_IMAGE + bytesStream.size());
@@ -179,12 +186,16 @@ public class ChatClient {
 	        		pos += bytesRead;
 	        	} else {
 	        		System.err.println("Returnerade -1");
+	        		return;
 	        	}
 	        }
 	        
 	        // Skapa bilden.
 	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
 	        BufferedImage image = ImageIO.read(bytesStream);
+	        if (image == null) {
+	        	System.err.println("Bild som klient tog mot är null");
+	        }
 	        ImageIcon imageIcon = new ImageIcon(image);
 
 	        // Skapa en label som innehåller bilden (labeln kommer att visa bilden).

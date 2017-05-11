@@ -219,12 +219,7 @@ public class ClientWindow extends JFrame {
 			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				try {
-					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
+				client.sendImage(chooser.getSelectedFile());
 			}
 		}
 
