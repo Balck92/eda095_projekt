@@ -135,9 +135,9 @@ public class ClientWindow extends JFrame {
 	public void open() {
 		inputText.requestFocus();
 		pack();
-		setLocationRelativeTo(null); // Lägger fönstret mitt på skärmen
+		setLocationRelativeTo(null); // Lï¿½gger fï¿½nstret mitt pï¿½ skï¿½rmen
 		try {
-			EventQueue.invokeAndWait(new Runnable() {	// Skulle förhindra något fel med EventDispatch-tråden
+			EventQueue.invokeAndWait(new Runnable() {	// Skulle fï¿½rhindra nï¿½got fel med EventDispatch-trï¿½den
 				@Override
 				public void run() {
 					setVisible(true);
@@ -164,7 +164,7 @@ public class ClientWindow extends JFrame {
 		users.removeLine(userName);
 	}
 
-	// Lyssnar på tangentbordet.
+	// Lyssnar pï¿½ tangentbordet.
 	private class KeyboardListener implements KeyListener {
 
 		@Override
@@ -215,11 +215,18 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent ae) {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			    "Images", "jpg", "png");
+			    "JPG Images", "jpg");
+			
+		
 			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				client.sendImage(chooser.getSelectedFile());
+				try {
+					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
 			}
 		}
 

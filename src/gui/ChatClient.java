@@ -26,11 +26,13 @@ import javax.swing.JOptionPane;
 import server.Server;
 import util.Communication;
 
-// Klienten för chatt-programmet.
+// Klienten fï¿½r chatt-programmet.
 public class ChatClient {
 
 	private static final String ENTER_HOST_PORT_PROMPT = "Please enter host and port";
 
+	
+	
 	public static void main(String[] args) {
 		ChatClient client = new ChatClient();
 		client.start();
@@ -43,20 +45,20 @@ public class ChatClient {
 	private BufferedWriter writer;
 	private BufferedReader reader;
 
-	private ClientWindow window = new ClientWindow(this);	// Fönstret.
-	private Thread readThread = new InputReaderThread(); // Tråd som läser input från servern.
+	private ClientWindow window = new ClientWindow(this);	// Fï¿½nstret.
+	private Thread readThread = new InputReaderThread(); // Trï¿½d som lï¿½ser input frï¿½n servern.
 
 	public ChatClient() {
-		// Frågar användaren efter host och port.
+		// Frï¿½gar anvï¿½ndaren efter host och port.
 		UserInputWindow userInput = new UserInputWindow();
 		userInput.show(ENTER_HOST_PORT_PROMPT);
 		
-		// Fråga användaren efter en host och port till de anger något som går att ansluta till.
+		// Frï¿½ga anvï¿½ndaren efter en host och port till de anger nï¿½got som gï¿½r att ansluta till.
 		while (true) {
 			try {
 				String host = userInput.getHost();
-				host = host.isEmpty() ? "localhost" : host;		// Om man lämnar host-rutan tom ansluter den till localhost.
-				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();	// Default-port är 30000.
+				host = host.isEmpty() ? "localhost" : host;		// Om man lï¿½mnar host-rutan tom ansluter den till localhost.
+				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();	// Default-port ï¿½r 30000.
 				s = new Socket(host, port);
 				is = new BufferedInputStream(s.getInputStream());
 				os = new BufferedOutputStream(s.getOutputStream());
@@ -77,14 +79,16 @@ public class ChatClient {
 	
 	public void sendImage(File imageFile) {
 		try {
+
 			BufferedImage image = ImageIO.read(imageFile);
 			System.out.println(imageFile.getName());
 			String[] nameSeparated = imageFile.getName().split("\\.");
 			String extension = nameSeparated[nameSeparated.length - 1];
 			
-			// Gör om bilden till en array av bytes.
+			// Gï¿½r om bilden till en array av bytes.
+
 	        ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
-	        if (!ImageIO.write(image, extension, bytesStream)) {	// Kunde inte läsa.
+	        if (!ImageIO.write(image, extension, bytesStream)) {	// Kunde inte lï¿½sa.
 	        	System.err.println("Could not read image " + imageFile.getAbsolutePath());
 	        	return;
 	        }
@@ -103,19 +107,19 @@ public class ChatClient {
 		try {
 			String showText = "Please enter your name";
 			while (true) {
-				String name = JOptionPane.showInputDialog(showText);	// Namnet användaren har valt.
+				String name = JOptionPane.showInputDialog(showText);	// Namnet anvï¿½ndaren har valt.
 				if (name == null)	// Om de avbryter blir namnet null.
 					System.exit(0);
-				Communication.sendMessage(writer, name);	// Skicka förslag på namn till servern.
+				Communication.sendMessage(writer, name);	// Skicka fï¿½rslag pï¿½ namn till servern.
 				String response = reader.readLine();		// Serverns svar.
 				if (response.startsWith(Server.NAME_OK)) {	// OK namn.
 					window.setTitle(name + " - Chat");
 					return;
-				} else if (response.startsWith(Server.NAME_TAKEN)) {	// Någon annan har redan namnet.
+				} else if (response.startsWith(Server.NAME_TAKEN)) {	// Nï¿½gon annan har redan namnet.
 					showText = "Name \"" + name + "\" is taken. Please enter another name";
-				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {	// Namnet är för kort
+				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {	// Namnet ï¿½r fï¿½r kort
 					showText = "Name \"" + name + "\" is too short. Please enter another name";
-				} else if (response.startsWith(Server.NAME_ILLEGAL)) {	// Namnet innehåller tecken som ' ' eller '['
+				} else if (response.startsWith(Server.NAME_ILLEGAL)) {	// Namnet innehï¿½ller tecken som ' ' eller '['
 					showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
 				} else {
 					System.err.println("Unknown response: " + response);
@@ -132,7 +136,7 @@ public class ChatClient {
 		Communication.sendMessage(writer, message);
 	}
 
-	// Säger till servern att kliented stängs ner och stänger sen.
+	// Sï¿½ger till servern att kliented stï¿½ngs ner och stï¿½nger sen.
 	public void quit() {
 		try {
 			Communication.sendMessage(writer, "Q");
@@ -145,11 +149,11 @@ public class ChatClient {
 		}
 	}
 
-	// Tråd som läser input från servern.
+	// Trï¿½d som lï¿½ser input frï¿½n servern.
 	private class InputReaderThread extends Thread {
 		
 		public void run() {
-			while (true) {	// Läs input från servern hela tiden.
+			while (true) {	// Lï¿½s input frï¿½n servern hela tiden.
 				try {
 					String line = reader.readLine();
 					if (line != null) {
@@ -161,7 +165,7 @@ public class ChatClient {
 			}
 		}
 		
-		// Tar hand om raden från servern.
+		// Tar hand om raden frï¿½n servern.
 		private void handleLine(String line) {
 			if (line.startsWith(Communication.SHOW_MESSAGE)) {
 				window.addLine(line.substring(Communication.SHOW_MESSAGE.length()));
@@ -171,17 +175,17 @@ public class ChatClient {
 				window.removeUser(line.substring(Communication.USER_LEFT.length()));
 			} else if (line.startsWith(Communication.SEND_IMAGE)) {
 				receiveImage(line.substring(Communication.SEND_IMAGE.length()));
-			} else {	// Okänt meddelande.
+			} else {	// Okï¿½nt meddelande.
 				System.err.println("Unknown message received from server: " + line);
 			}
 		}
 	}
 	
-	// Lägger bilden i ett eget fönster.
+	// Lï¿½gger bilden i ett eget fï¿½nster.
 	private void receiveImage(String sizeStr) {
 		int size = Integer.parseInt(sizeStr);
 		try {
-			// Läs in bilddata.
+			// Lï¿½s in bilddata.
 	        byte[] imageData = new byte[size];
 	        for (int pos = 0; pos < size; ) {
 	        	int bytesRead = is.read(imageData, pos, size - pos);
@@ -197,16 +201,16 @@ public class ChatClient {
 	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
 	        BufferedImage image = ImageIO.read(bytesStream);
 	        if (image == null) {
-	        	System.err.println("Bild som klient tog mot är null");
+	        	System.err.println("Bild som klient tog mot ï¿½r null");
 	        }
 	        ImageIcon imageIcon = new ImageIcon(image);
 
-	        // Skapa en label som innehåller bilden (labeln kommer att visa bilden).
+	        // Skapa en label som innehï¿½ller bilden (labeln kommer att visa bilden).
 	        JLabel imageLabel = new JLabel(imageIcon);
 	        imageLabel.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 	        imageLabel.setVisible(true);
 	        
-	        // Skapa ett fönster som bilden kommer ligga i.
+	        // Skapa ett fï¿½nster som bilden kommer ligga i.
 	        JFrame imageFrame = new JFrame();
 	        imageFrame.add(imageLabel);
 	        imageFrame.pack();
