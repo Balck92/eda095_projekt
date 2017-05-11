@@ -77,17 +77,19 @@ public class ChatClient {
 		readThread.start();
 	}
 	
+	private ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
+	
 	public void sendImage(File imageFile) {
 		try {
 
 			BufferedImage image = ImageIO.read(imageFile);
-			System.out.println(imageFile.getName());
 			String[] nameSeparated = imageFile.getName().split("\\.");
 			String extension = nameSeparated[nameSeparated.length - 1];
 			
 			// G�r om bilden till en array av bytes.
 
-	        ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
+			bytesStream.reset();
+	        bytesStream = new ByteArrayOutputStream();
 	        if (!ImageIO.write(image, extension, bytesStream)) {	// Kunde inte l�sa.
 	        	System.err.println("Could not read image " + imageFile.getAbsolutePath());
 	        	return;

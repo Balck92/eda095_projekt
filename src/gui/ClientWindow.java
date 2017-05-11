@@ -54,7 +54,7 @@ public class ClientWindow extends JFrame {
 	private JPanel buttonPanel = new JPanel();
 	private JButton sendButton = new JButton("Send");
 	private JButton sendImageButton = new JButton("Send image");
-	private JButton quitButton = new JButton("Quit");
+	private JButton quitButton = new JButton("Logout");
 	
 	Component[] components = { upperPanel, inputText, sendButton, sendImageButton, quitButton };
 	
