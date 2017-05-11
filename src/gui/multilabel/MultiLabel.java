@@ -67,11 +67,14 @@ public class MultiLabel extends JPanel {
 			int index = extendedList.size() - labelList.size() + i;
 			if (index >= 0) {	// Om det finns ett meddelande att visa på raden.
 				Object item = extendedList.get(index);
-				System.out.println("resize(): " + item);
+				JLabel label = labelList.get(i);
 				if (item instanceof String) {
-					labelList.get(i).setText((String) item);
+					label.setIcon(null);
+					label.setText((String) item);
 				} else if (item instanceof ImageIcon) {
-					labelList.get(i).setIcon((ImageIcon) item);
+					label.setSize(label.getWidth() * 5, label.getHeight() * 5);
+					label.setIcon((ImageIcon) item);
+					label.setText("");
 				}
 			}
 			else {			// Om det inte finns något meddelande på raden.
