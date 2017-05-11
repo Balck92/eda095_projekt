@@ -59,7 +59,14 @@ public class ConnectionThread extends Thread {
 			// Läs bytes från klienten.
 	        InputStream inputStream = user.getInputStream();
 	        byte[] imageData = new byte[size];
-	        for (int pos = 0; pos < size; pos += inputStream.read(imageData, pos, size - pos)) {}
+	        for (int pos = 0; pos < size; ) {
+	        	int bytesRead = inputStream.read(imageData, pos, size - pos);
+	        	if (bytesRead == -1) {
+	        		System.err.println("Returnerade -1");
+	        		return;
+	        	}
+	        	pos += bytesRead;
+	        }
 	        
 	        // Skicka bilden till alla användare.
 			user.getCurrentRoom().broadcastImage(imageData);
