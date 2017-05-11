@@ -156,8 +156,6 @@ public class ClientWindow extends JFrame {
 	}
 	
 	public void addImage(BufferedImage image) {
-		ImageIcon imageIcon = new ImageIcon(image);
-
 		messages.addImage(image);
         /*// Skapa en label som inneh�ller bilden (labeln kommer att visa bilden).
         JLabel imageLabel = new JLabel(imageIcon);

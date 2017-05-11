@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -13,7 +14,7 @@ public class MultiLabel extends JPanel {
 	private static final int START_LINES = 20;
 	private static final int MAX_LINES = START_LINES + START_LINES / 2;
 
-	protected LinkedList<String> textList = new LinkedList<String>();
+	protected LinkedList<Object> extendedList = new LinkedList<Object>();
 	protected LinkedList<JLabel> labelList = new LinkedList<JLabel>();	// Listan av text.
 	
 	public MultiLabel() {
@@ -26,16 +27,16 @@ public class MultiLabel extends JPanel {
 	}
 	
 	// Lägg till ett meddelande längst ner.
-	public void addLine(String line) {
-		if (textList.size() >= MAX_LINES) {	// Lagra inte för många meddelanden.
-			textList.removeFirst();
+	public void addLine(Object line) {
+		if (extendedList.size() >= MAX_LINES) {	// Lagra inte för många meddelanden.
+			extendedList.removeFirst();
 		}
-		textList.add(line);
+		extendedList.addLast(line);
 		resize();
 	}
 	
-	public void removeLine(String line) {
-		textList.remove(line);
+	public void removeLine(Object line) {
+		extendedList.remove(line);
 		resize();
 	}
 	
@@ -63,11 +64,19 @@ public class MultiLabel extends JPanel {
 		
 		// Skriv meddelandena i labels.
 		for (int i = 0; i < labelList.size(); i++) {
-			int index = textList.size() - labelList.size() + i;
-			if (index >= 0)	// Om det finns ett meddelande att visa på raden.
-				labelList.get(i).setText(textList.get(index));
-			else			// Om det inte finns något meddelande på raden.
+			int index = extendedList.size() - labelList.size() + i;
+			if (index >= 0) {	// Om det finns ett meddelande att visa på raden.
+				Object item = extendedList.get(index);
+				System.out.println("resize(): " + item);
+				if (item instanceof String) {
+					labelList.get(i).setText((String) item);
+				} else if (item instanceof ImageIcon) {
+					labelList.get(i).setIcon((ImageIcon) item);
+				}
+			}
+			else {			// Om det inte finns något meddelande på raden.
 				labelList.get(i).setText("");
+			}
 		}
 	}
 }

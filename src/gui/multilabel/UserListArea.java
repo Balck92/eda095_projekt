@@ -13,14 +13,14 @@ public class UserListArea extends MultiLabel {
 	}
 	
 	@Override
-	public void addLine(String line) {
+	public void addLine(Object line) {
 		super.addLine(INDENTATION + line);
 	}
 	
 	// Ta inte bort raden som säger "Userlist:"
 	@Override
-	public void removeLine(String line) {
-		if (textList.size() > 1) {
+	public void removeLine(Object line) {
+		if (extendedList.size() > 1) {
 			super.removeLine(INDENTATION + line);
 		}
 	}

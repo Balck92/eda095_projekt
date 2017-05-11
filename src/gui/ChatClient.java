@@ -184,6 +184,7 @@ public class ChatClient {
 	// Lï¿½gger bilden i ett eget fï¿½nster.
 	private void receiveImage(String sizeStr) {
 		int size = Integer.parseInt(sizeStr);
+		System.out.println("Tog emot storlek: " + sizeStr);
 		try {
 			// Lï¿½s in bilddata.
 	        byte[] imageData = new byte[size];
@@ -201,7 +202,7 @@ public class ChatClient {
 	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
 	        BufferedImage image = ImageIO.read(bytesStream);
 	        if (image == null) {
-	        	System.err.println("Bild som klient tog mot ï¿½r null");
+	        	System.err.println("Bild som klient tog mot är null");
 	        } else {
 	        	window.addImage(image);
 	        }
