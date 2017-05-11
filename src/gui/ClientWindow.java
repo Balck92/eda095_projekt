@@ -215,18 +215,13 @@ public class ClientWindow extends JFrame {
 		public void actionPerformed(ActionEvent ae) {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			    "JPG Images", "jpg");
+			    "Images", "jpg", "png");
 			
 		
 			chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				try {
-					client.sendImage(ImageIO.read(chooser.getSelectedFile()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
+				client.sendImage(chooser.getSelectedFile());
 			}
 		}
 
