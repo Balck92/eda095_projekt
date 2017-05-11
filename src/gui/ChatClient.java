@@ -202,9 +202,9 @@ public class ChatClient {
 	        BufferedImage image = ImageIO.read(bytesStream);
 	        if (image == null) {
 	        	System.err.println("Bild som klient tog mot �r null");
+	        } else {
+	        	window.addImage(image);
 	        }
-	        
-	        window.addImage(image);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
