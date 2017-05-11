@@ -173,7 +173,14 @@ public class ChatClient {
 		try {
 			// Läs in bilddata.
 	        byte[] imageData = new byte[size];
-	        for (int pos = 0; pos < size; pos += is.read(imageData, pos, size - pos)) {}
+	        for (int pos = 0; pos < size; ) {
+	        	int bytesRead = is.read(imageData, pos, size - pos);
+	        	if (bytesRead != -1) {
+	        		pos += bytesRead;
+	        	} else {
+	        		System.err.println("Returnerade -1");
+	        	}
+	        }
 	        
 	        // Skapa bilden.
 	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
