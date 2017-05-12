@@ -26,6 +26,8 @@ public class MessageArea extends MultiLabel {
 		return new MessageLabel(inputTextField);
 	}
 	
+	// Små bilder kommer skalas upp
+	// Riktigt små bilder kommer nog bli problem med.
 	public void addImage(BufferedImage bImage) {
 		JLabel label = labelList.getLast();
 		double scaleAmount = Math.min(label.getWidth() / ((double) bImage.getWidth()),	// Hur mycket bilden ska skalas ner för att få plats.

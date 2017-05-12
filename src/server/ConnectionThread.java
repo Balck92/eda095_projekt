@@ -69,6 +69,8 @@ public class ConnectionThread extends Thread {
 	        	pos += bytesRead;
 	        }
 	        
+	        System.out.println("Servern tog emot storlek " + size + " av " + user.getName());
+	        
 	        // Skicka bilden till alla anv�ndare.
 			user.getCurrentRoom().broadcastImage(imageData);
 		} catch (IOException e) {

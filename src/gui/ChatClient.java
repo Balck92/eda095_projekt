@@ -95,9 +95,12 @@ public class ChatClient {
 	        	return;
 	        }
 	        
+	        byte[] imageData = bytesStream.toByteArray();
+	        
 	        // Skicka storleken och arrayn.
-			Communication.sendMessage(writer, Communication.SEND_IMAGE + bytesStream.size());
-	        os.write(bytesStream.toByteArray());
+			Communication.sendMessage(writer, Communication.SEND_IMAGE + imageData.length);
+			System.out.println("Klienten skickar bild med storlek " + imageData.length);;
+	        os.write(imageData);
 	        os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -190,7 +193,7 @@ public class ChatClient {
 		try {
 			// Lï¿½s in bilddata.
 	        byte[] imageData = new byte[size];
-	        for (int pos = 0; pos < size; ) {
+	        /*for (int pos = 0; pos < size; ) {
 	        	int bytesRead = is.read(imageData, pos, size - pos);
 	        	if (bytesRead != -1) {
 	        		pos += bytesRead;
@@ -198,11 +201,14 @@ public class ChatClient {
 	        		System.err.println("Returnerade -1");
 	        		return;
 	        	}
-	        }
+	        }*/
+	        is.read(imageData);
+	        
+	        System.out.println("Klienten tog emot bild med stolek " + imageData.length);
 	        
 	        // Skapa bilden.
-	        ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
-	        BufferedImage image = ImageIO.read(bytesStream);
+	        //ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
+	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 	        if (image == null) {
 	        	System.err.println("Bild som klient tog mot är null");
 	        } else {

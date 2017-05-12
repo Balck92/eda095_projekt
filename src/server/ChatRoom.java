@@ -42,14 +42,20 @@ public class ChatRoom {
 		for (User user : users.values()) {
 			// Berätta för klienten att de får en bild och skicka storleken på bilden.
 			Communication.sendMessage(user, Communication.SEND_IMAGE + imageData.length);
-			OutputStream os = user.getOutputStream();
-	        try {
-	        	os.write(imageData);	// Skicka bilden.
-	        	os.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+			sendImageToUser(user, imageData);
+	        System.out.println("Klar med att skicka bilden"	);
+		}
+	}
+	
+	private synchronized void sendImageToUser(User user, byte[] imageData) {
+		System.out.println("Servern skickar bild av stolek " + imageData.length + " till användare " + user.getName());
+		OutputStream os = user.getOutputStream();
+        try {
+        	os.write(imageData);	// Skicka bilden.
+        	os.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
