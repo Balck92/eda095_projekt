@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,9 +16,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import server.Server;
@@ -193,7 +188,7 @@ public class ChatClient {
 		try {
 			// L�s in bilddata.
 	        byte[] imageData = new byte[size];
-	        /*for (int pos = 0; pos < size; ) {
+	        for (int pos = 0; pos < size; ) {
 	        	int bytesRead = is.read(imageData, pos, size - pos);
 	        	if (bytesRead != -1) {
 	        		pos += bytesRead;
@@ -201,8 +196,7 @@ public class ChatClient {
 	        		System.err.println("Returnerade -1");
 	        		return;
 	        	}
-	        }*/
-	        is.read(imageData);
+	        }
 	        
 	        System.out.println("Klienten tog emot bild med stolek " + imageData.length);
 	        
@@ -215,8 +209,7 @@ public class ChatClient {
 	        	window.addImage(image);
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+			window.addLine("Unable to show image.");
 		}
 	}
 	

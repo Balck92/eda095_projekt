@@ -16,11 +16,9 @@ import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -48,7 +46,7 @@ public class ClientWindow extends JFrame {
 	// Meddelandena och anv�ndarna.
 	private JPanel upperPanel = new JPanel();
 	private MessageArea messages = new MessageArea(inputText);
-	private MultiLabel users = new UserListArea();
+	private MultiLabel users = new UserListArea(inputText);
 
 	// Knappar
 	private JPanel buttonPanel = new JPanel();
