@@ -43,7 +43,7 @@ public class Communication {
 	
 	private static void writeMessageToClient(Writer writer, String message) {
 		try {
-			writer.write(SHOW_MESSAGE + message + "\n");
+			writer.write(SHOW_MESSAGE + message + "\r\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -77,7 +77,7 @@ public class Communication {
 	// Skriver meddelandet, med anropar inte flush.
 	public static void writeMessage(Writer writer, String message) {
 		try {
-			writer.write(message + "\n");
+			writer.write(message + "\r\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
