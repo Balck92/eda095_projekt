@@ -2,9 +2,9 @@ package gui.multilabel;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -14,8 +14,8 @@ public class MultiLabel extends JPanel {
 	private static final int START_LINES = 20;
 	private static final int MAX_LINES = START_LINES + START_LINES / 2;
 
-	protected List<String> textList = new ArrayList<String>();
-	protected List<JLabel> labelList = new ArrayList<JLabel>();	// Listan av text.
+	protected LinkedList<Object> extendedList = new LinkedList<Object>();
+	protected LinkedList<JLabel> labelList = new LinkedList<JLabel>();	// Listan av text.
 	
 	public MultiLabel() {
 		super();
@@ -23,62 +23,63 @@ public class MultiLabel extends JPanel {
 	}
 	
 	protected JLabel getLabel() {
-		return new JLabel("-");
-	}
-	
-	// Lägg till en label.
-	public Component add(JLabel label) {
-		super.add(label);
-		labelList.add(label);
-		return label;
+		return new JLabel("");
 	}
 	
 	// Lägg till ett meddelande längst ner.
-	public void addLine(String line) {
-		textList.add(line);
+	public void addLine(Object line) {
+		if (extendedList.size() >= MAX_LINES) {	// Lagra inte för många meddelanden.
+			extendedList.removeFirst();
+		}
+		extendedList.addLast(line);
 		resize();
 	}
 	
-	public void removeLine(String line) {
-		textList.remove(line);
+	public void removeLine(Object line) {
+		extendedList.remove(line);
 		resize();
 	}
 	
 	@Override
-	public Component add(Component c) {	// Ska inte kunna lägga till något än JLabel.
+	public Component add(Component c) {	// Ska inte kunna lägga till något annat än JLabel.
 		System.exit(1);
 		return null;
 	}
 	
 	public void resize() {
-		while (textList.size() > MAX_LINES) {	// Lagra inte för många meddelanden.
-			textList.remove(0);
-		}
+		int size = (int) (START_LINES / 350.0 * getHeight());	// Hur många JLabels vi ska ha i fönstret.
+		size = Math.min(size, MAX_LINES);	// Inte fler meddelanden än MAX_LINES.
 		
-		int maxSize = (int) (START_LINES / 350.0 * getHeight());
-		maxSize = Math.min(maxSize, MAX_LINES);	// Inte fler meddelanden än MAX_LINES.
-		
-		if (labelList.size() != maxSize) {	// Om vi måste ändra storlek.
-			super.removeAll();	// Ta bort alla labels.
-			while (labelList.size() < maxSize) {
-				labelList.add(getLabel());
+		if (labelList.size() != size) {	// Om vi måste ändra storlek.
+			while (labelList.size() < size) {	// Om fönstret blev större.
+				JLabel label = getLabel();		// Lägg till en ny label.
+				labelList.addFirst(label);
+				super.add(label, 0);
 			}
-			while (labelList.size() > maxSize) {
-				labelList.remove(labelList.size() - 1);
-			}
-			for (JLabel label : labelList) {	// Lägg till rätt antal.
-				super.add(label);
+			while (labelList.size() > size) {	// Om fönstret förminskades.
+				labelList.removeFirst();
+				super.remove(0);
 			}
 		}
 		
-		int index = textList.size() - labelList.size();
-		for (int i = 0; i < labelList.size(); i++) {	// Skriv meddelandena i labels.
-			if (index >= 0) {	// Finns meddelande att skriva på raden.
-				labelList.get(i).setText(textList.get(index));
-			} else {			// Finns inget meddelande att skriva på raden.
+		// Skriv meddelandena i labels.
+		for (int i = 0; i < labelList.size(); i++) {
+			int index = extendedList.size() - labelList.size() + i;
+			if (index >= 0) {	// Om det finns ett meddelande att visa på raden.
+				Object item = extendedList.get(index);
+				JLabel label = labelList.get(i);
+				if (item instanceof String) {
+					label.setIcon(null);
+					label.setText((String) item);
+				} else if (item instanceof ImageIcon) {
+					label.setSize(label.getWidth() * 5, label.getHeight() * 5);
+					label.setIcon((ImageIcon) item);
+					label.setText("");
+				}
+			}
+			else {			// Om det inte finns något meddelande på raden.
 				labelList.get(i).setText("");
 			}
-			index++;
 		}
 	}
 }

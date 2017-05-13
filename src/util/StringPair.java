@@ -1,5 +1,6 @@
 package util;
 
+// Två strängar.
 public class StringPair {
 
 	public String one;

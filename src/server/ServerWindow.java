@@ -4,11 +4,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -84,6 +79,12 @@ public class ServerWindow {
 				timeOnlineLabel.setText(String.format(ONLINE_LABEL_TEXT, minSecSince(startTime)));
 				if (lastMessage != null) {
 					lastMessageLabel.setText(String.format(LAST_MESSAGE_LABEL_TEXT, lastMessage, minSecSince(timeLastMessage)));
+				}
+				try {
+					synchronized (this) {	// Tråden måste äga sin egen moniter för att få vänta.
+						wait(1000);	// Vänta 1 sekund innan servern kolla tiden igen.
+					}
+				} catch (InterruptedException e) {
 				}
 			}
 		}

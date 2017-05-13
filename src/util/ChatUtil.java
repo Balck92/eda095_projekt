@@ -1,10 +1,7 @@
 package util;
 
+// Bekväma metoder.
 public class ChatUtil {
-
-	public static String whisperGetName(String text) {
-		return null;
-	}
 	
 	public static StringPair getWhisperNameMessage(String text) {
 		String nameAndMessage = text.substring(Communication.CHAT_PRIVATE_MESSAGE.length());
