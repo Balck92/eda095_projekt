@@ -72,7 +72,6 @@ public class MultiLabel extends JPanel {
 					label.setIcon(null);
 					label.setText((String) item);
 				} else if (item instanceof ImageIcon) {
-					label.setSize(label.getWidth() * 5, label.getHeight() * 5);
 					label.setIcon((ImageIcon) item);
 					label.setText("");
 				}
