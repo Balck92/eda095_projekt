@@ -80,12 +80,13 @@ public class ConnectionThread extends Thread {
 	
 	// Den fï¿½rsta raden innehï¿½ller anvï¿½ndaren man vill skicka till. Den andra raden ï¿½r meddelandet.
 	private void sendPrivateMessage(String firstLine) {
-		firstLine = firstLine.substring(Communication.PRIVATE_MESSAGE.length());
-		String name = firstLine.substring(firstLine.indexOf(":") + 1);
+		String name = firstLine.substring(Communication.PRIVATE_MESSAGE.length());
 		String message = readLine();	// Den andra raden innehï¿½ller meddelandet.
-		if (user.getCurrentRoom().hasUser(name)) {
+		if (user.getCurrentRoom().hasUser(name)) {	// Finns en användare med namnet.
 			Communication.sendMessageToClient(user, sendPrivateMessage(name, message));	// Den som skickar meddelandet fï¿½r upp texten "to [User]: Message"
 			user.getCurrentRoom().sendMessage(name, receivePrivateMessage(message));	// Den som tar emot meddelandet fï¿½r upp texten "from [User]: Message"
+		} else {	// Användaren finns inte.
+			Communication.sendMessageToClient(user, "User [" + name + "] not found.");
 		}
 	}
 	

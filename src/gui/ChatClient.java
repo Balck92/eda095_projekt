@@ -25,8 +25,6 @@ import util.Communication;
 public class ChatClient {
 
 	private static final String ENTER_HOST_PORT_PROMPT = "Please enter host and port";
-
-	
 	
 	public static void main(String[] args) {
 		ChatClient client = new ChatClient();
@@ -34,7 +32,6 @@ public class ChatClient {
 	}
 
 	// Kopplingen till servern
-	private Socket s;
 	private InputStream is;
 	private OutputStream os;
 	private BufferedWriter writer;
@@ -54,7 +51,7 @@ public class ChatClient {
 				String host = userInput.getHost();
 				host = host.isEmpty() ? "localhost" : host;		// Om man l�mnar host-rutan tom ansluter den till localhost.
 				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();	// Default-port �r 30000.
-				s = new Socket(host, port);
+				Socket s = new Socket(host, port);
 				is = new BufferedInputStream(s.getInputStream());
 				os = new BufferedOutputStream(s.getOutputStream());
 				writer = new BufferedWriter(new OutputStreamWriter(os));
