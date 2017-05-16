@@ -90,8 +90,9 @@ public class ChatClient {
 	        byte[] imageData = bytesStream.toByteArray();
 	        
 	        // Skicka storleken och arrayn.
+	        //window.send(Communication.BROADCAST_MESSAGE, " ");
 			Communication.sendMessage(writer, Communication.SEND_IMAGE + imageData.length);
-			System.out.println("Klienten skickar bild med storlek " + imageData.length);;
+			//System.out.println("Klienten skickar bild med storlek " + imageData.length);;
 	        os.write(imageData);
 	        os.flush();
 		} catch (IOException e) {
@@ -195,7 +196,7 @@ public class ChatClient {
 	        	}
 	        }
 	        
-	        System.out.println("Klienten tog emot bild med stolek " + imageData.length);
+	        //System.out.println("Klienten tog emot bild med stolek " + imageData.length);
 	        
 	        // Skapa bilden.
 	        //ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
