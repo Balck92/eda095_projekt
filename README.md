@@ -5,7 +5,12 @@ Lisa Silfversten, Amanda Eliasson, Carl Johan Balck, Niklas Ovnell
 ## Resultat
 I vårt projekt har vi utvecklat ett chattforum, där det går att skicka både textmeddelanden i en gruppchatt till samtliga användare (broadcast) och privata meddelanden till en sprecifik användare. Förutom att skicka textmeddelanden kan användare även skicka bilder. Chattforumet innehåller en användarlista där alla inloggade användare syns, det vill säga användare läggs till i användarlistan när de loggar in och tas bort från användarlistan när de loggar ut. När Användare loggar in väljer de ett användarnamn och när de vill logga ut klickar de ner chatten. Användare har även möjlighet att ändra gränsnittets storlek.
 
-BILDER!!
+![alt text](login.png)
+![alt text](chatt.png)
+![alt text](sendimage.png)
+
+
+
 
 ## Tekniker och design
 I projektet används en multitrådar TCP server och TCP klienter. Det finns även ett program som kör mutipla trådar och som läser och visar meddelanden.
