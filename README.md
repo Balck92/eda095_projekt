@@ -11,9 +11,14 @@ I vårt projekt har vi utvecklat ett chattforum, där det går att skicka både 
 ## Chattforum
 ![alt text](chatt.png)
 
+## Skicka meddelande, både till alla inloggande användare och privat till en specifik användare 
+![alt text](send.png)
+
 ## Skicka bild
 ![alt text](sendimage2.png)
 
+## Logga ut
+![alt text](logout.png)
 
 ## Tekniker och design
 I projektet används en multitrådar TCP server och TCP klienter. Det finns även ett program som kör mutipla trådar och som läser och visar meddelanden.
