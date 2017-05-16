@@ -7,7 +7,7 @@ I vårt projekt har vi utvecklat ett chattforum, där det går att skicka både 
 
 ![alt text](login.png)
 ![alt text](chatt.png)
-![alt text](sendimage.png)
+![alt text](sendimage2.png)
 
 
 
