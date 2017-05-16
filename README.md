@@ -11,7 +11,7 @@ I vårt projekt har vi utvecklat ett chattforum, där det går att skicka både 
 ## Chattforum
 <img src="chatt.png" width="300"/>
 
-## Skicka meddelande, både broadcast och privata meddelanden  
+## Skicka meddelande, både broadcast och privat 
 <img src="send.png" width="300"/>
 
 ## Skicka bild
