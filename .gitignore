@@ -1,6 +1,6 @@
 bin/
 *.class
-log*
+log_*
 *.iml
 .idea/
 out/
