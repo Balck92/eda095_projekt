@@ -1,7 +1,8 @@
 package util;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Writer;
 
 import server.User;
 
@@ -24,13 +25,13 @@ public class Communication {
 	public static final String USER_LEFT = "UL:";
 	
 	public static void sendMessageToClient(User user, String message) {
-		sendMessageToClient(user.getWriter(), message);
+		sendMessageToClient(user.getOutputStream(), message);
 	}
 	
-	private static void sendMessageToClient(Writer writer, String message) {
+	private static void sendMessageToClient(DataOutputStream os, String message) {
 		try {
-			writeMessageToClient(writer, message);
-			writer.flush();
+			writeMessageToClient(os, message);
+			os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -38,12 +39,12 @@ public class Communication {
 	}
 	
 	public static void writeMessageToClient(User user, String message) {
-		writeMessageToClient(user.getWriter(), message);
+		writeMessageToClient(user.getOutputStream(), message);
 	}
 	
-	private static void writeMessageToClient(Writer writer, String message) {
+	private static void writeMessageToClient(DataOutputStream os, String message) {
 		try {
-			writer.write(SHOW_MESSAGE + message + "\r\n");
+			os.writeUTF(SHOW_MESSAGE + message + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -60,14 +61,14 @@ public class Communication {
 	}
 	
 	public static void sendMessage(User user, String message) {
-		sendMessage(user.getWriter(), message);
+		sendMessage(user.getOutputStream(), message);
 	}
 	
 	// Skickar bara till en.
-	public static void sendMessage(Writer writer, String message) {
+	public static void sendMessage(DataOutputStream os, String message) {
 		try {
-			writeMessage(writer, message);
-			writer.flush();
+			writeMessage(os, message);
+			os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -75,9 +76,9 @@ public class Communication {
 	}
 	
 	// Skriver meddelandet, med anropar inte flush.
-	public static void writeMessage(Writer writer, String message) {
+	public static void writeMessage(DataOutputStream os, String message) {
 		try {
-			writer.write(message + "\r\n");
+			os.writeUTF(message + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -86,10 +87,28 @@ public class Communication {
 	
 	public static void flush(User user) {
 		try {
-			user.getWriter().flush();
+			user.getOutputStream().flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public static String readLine(DataInputStream is) {
+		String s = null;
+		try {
+			s = readLineNoCatch(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return s;
+	}
+	
+	public static String readLineNoCatch(DataInputStream is) throws IOException {
+		String s = is.readUTF();
+		if (!s.isEmpty() && s.charAt(s.length() - 1) == '\n')
+			s = s.substring(0, s.length() - 1);
+		return s;
 	}
 }

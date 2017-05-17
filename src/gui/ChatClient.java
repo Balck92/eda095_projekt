@@ -3,16 +3,12 @@ package gui;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
@@ -32,10 +28,8 @@ public class ChatClient {
 	}
 
 	// Kopplingen till servern
-	private InputStream is;
-	private OutputStream os;
-	private BufferedWriter writer;
-	private BufferedReader reader;
+	private DataInputStream is;
+	private DataOutputStream os;
 
 	private ClientWindow window = new ClientWindow(this);	// Fï¿½nstret.
 	private Thread readThread = new InputReaderThread(); // Trï¿½d som lï¿½ser input frï¿½n servern.
@@ -47,18 +41,22 @@ public class ChatClient {
 		
 		// Frï¿½ga anvï¿½ndaren efter en host och port till de anger nï¿½got som gï¿½r att ansluta till.
 		while (true) {
+			Socket s = null;
 			try {
 				String host = userInput.getHost();
 				host = host.isEmpty() ? "localhost" : host;		// Om man lï¿½mnar host-rutan tom ansluter den till localhost.
 				int port = userInput.getPort() == 0 ? 30000: userInput.getPort();	// Default-port ï¿½r 30000.
-				Socket s = new Socket(host, port);
-				is = new BufferedInputStream(s.getInputStream());
-				os = new BufferedOutputStream(s.getOutputStream());
-				writer = new BufferedWriter(new OutputStreamWriter(os));
-				reader = new BufferedReader(new InputStreamReader(is));
+				s = new Socket(host, port);
+				is = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+				os = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
 				break;
 			} catch (IOException e) {
 				userInput.show("Couldn't connect. " + ENTER_HOST_PORT_PROMPT);
+				try {
+					if (s != null) {
+						s.close();	// Stäng socketen om det inte gick att connecta.
+					}
+				} catch (IOException ex) {}
 			}
 		}
 	}
@@ -90,9 +88,7 @@ public class ChatClient {
 	        byte[] imageData = bytesStream.toByteArray();
 	        
 	        // Skicka storleken och arrayn.
-	        //window.send(Communication.BROADCAST_MESSAGE, " ");
-			Communication.sendMessage(writer, Communication.SEND_IMAGE + imageData.length);
-			//System.out.println("Klienten skickar bild med storlek " + imageData.length);;
+			Communication.sendMessage(os, Communication.SEND_IMAGE + imageData.length);
 	        os.write(imageData);
 	        os.flush();
 		} catch (IOException e) {
@@ -100,46 +96,41 @@ public class ChatClient {
 			System.exit(1);
 		}
 	}
-	
+
 	private void getUserName() {
-		try {
-			String showText = "Please enter your name";
-			while (true) {
-				String name = JOptionPane.showInputDialog(showText);	// Namnet anvï¿½ndaren har valt.
-				if (name == null)	// Om de avbryter blir namnet null.
-					System.exit(0);
-				Communication.sendMessage(writer, name);	// Skicka fï¿½rslag pï¿½ namn till servern.
-				String response = reader.readLine();		// Serverns svar.
-				if (response.startsWith(Server.NAME_OK)) {	// OK namn.
-					window.setTitle(name + " - Chat");
-					return;
-				} else if (response.startsWith(Server.NAME_TAKEN)) {	// Nï¿½gon annan har redan namnet.
-					showText = "Name \"" + name + "\" is taken. Please enter another name";
-				} else if (response.startsWith(Server.NAME_TOO_SHORT)) {	// Namnet ï¿½r fï¿½r kort
-					showText = "Name \"" + name + "\" is too short. Please enter another name";
-				} else if (response.startsWith(Server.NAME_ILLEGAL)) {	// Namnet innehï¿½ller tecken som ' ' eller '['
-					showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
-				} else {
-					System.err.println("Unknown response: " + response);
-					System.exit(1);
-				}
+		String showText = "Please enter your name";
+		while (true) {
+			String name = JOptionPane.showInputDialog(showText);	// Namnet anvï¿½ndaren har valt.
+			if (name == null)	// Om de avbryter blir namnet null.
+				System.exit(0);
+			Communication.sendMessage(os, name);	// Skicka fï¿½rslag pï¿½ namn till servern.
+			String response = Communication.readLine(is);		// Serverns svar.
+			if (response.startsWith(Server.NAME_OK)) {	// OK namn.
+				window.setTitle(name + " - Chat");
+				return;
+			} else if (response.startsWith(Server.NAME_TAKEN)) {	// Nï¿½gon annan har redan namnet.
+				showText = "Name \"" + name + "\" is taken. Please enter another name";
+			} else if (response.startsWith(Server.NAME_TOO_SHORT)) {	// Namnet ï¿½r fï¿½r kort
+				showText = "Name \"" + name + "\" is too short. Please enter another name";
+			} else if (response.startsWith(Server.NAME_ILLEGAL)) {	// Namnet innehï¿½ller tecken som ' ' eller '['
+				showText = "Name \"" + name + "\" contains illegal characters. Please enter another name";
+			} else {
+				System.err.println("Unknown response: " + response);
+				System.exit(1);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
 	}
-	
+
 	public void sendMessage(String message) {
-		Communication.sendMessage(writer, message);
+		Communication.sendMessage(os, message);
 	}
 
 	// Sï¿½ger till servern att kliented stï¿½ngs ner och stï¿½nger sen.
 	public void quit() {
 		try {
-			Communication.sendMessage(writer, "Q");
-			writer.close();
-			reader.close();
+			Communication.sendMessage(os, "Q");
+			os.close();
+			is.close();
 			System.exit(0);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -153,12 +144,12 @@ public class ChatClient {
 		public void run() {
 			while (true) {	// Lï¿½s input frï¿½n servern hela tiden.
 				try {
-					String line = reader.readLine();
+					String line = Communication.readLineNoCatch(is);
 					if (line != null) {
 						handleLine(line);
 					}
-				} catch (IOException e) {
-					System.exit(0);
+				} catch (IOException e) {	// Användaren stängde ner.
+					break;
 				}
 			}
 		}
@@ -196,10 +187,8 @@ public class ChatClient {
 	        	}
 	        }
 	        
-	        //System.out.println("Klienten tog emot bild med stolek " + imageData.length);
 	        
 	        // Skapa bilden.
-	        //ByteArrayInputStream bytesStream = new ByteArrayInputStream(imageData);
 	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 	        if (image == null) {
 	        	System.err.println("Bild som klient tog mot är null");

@@ -1,8 +1,8 @@
 package server;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 
 import util.Communication;
 
@@ -46,7 +46,7 @@ public class ConnectionThread extends Thread {
 				} else if (line.startsWith(Communication.SEND_IMAGE)) {
 					receiveImage(line.substring(Communication.SEND_IMAGE.length()));	// Det efter I:
 				} else {
-					errorMessage(line, user.getWriter());	// Skicka ett felmeddelande till anv�ndaren.
+					errorMessage(line, user.getOutputStream());	// Skicka ett felmeddelande till anv�ndaren.
 					continue;
 				}
 			}
@@ -91,7 +91,7 @@ public class ConnectionThread extends Thread {
 	}
 	
 	private String readLineNoCatch() throws IOException {
-		String mess = user.getBufferedReader().readLine();
+		String mess = Communication.readLine(user.getInputStream());
 		window.setLastMessage(mess);
 		return mess;
 	}
@@ -120,7 +120,7 @@ public class ConnectionThread extends Thread {
 		return String.format("to [%s]: %s", user, message);	// Du sj�lv kommer ta emot detta meddelandet.
 	}
 	
-	private void errorMessage(String message, Writer writer) {
-		Communication.sendMessage(writer, "Message \"" + message + "\" was not sent.");
+	private void errorMessage(String message, DataOutputStream os) {
+		Communication.sendMessage(os, "Message \"" + message + "\" was not sent.");
 	}
 }

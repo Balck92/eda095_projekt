@@ -2,14 +2,9 @@ package server;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -19,33 +14,20 @@ import util.Communication;
 public class User {
 
 	private String userName;
-	private InputStream is;
-	private BufferedReader br;
-	private Writer writer;
-	private OutputStream os;
+	private DataInputStream is;
+	private DataOutputStream os;
 	
 	private ChatRoom currentRoom;
 	
 	public User(Socket s, ChatRoom chatRoom) {
 		try {
-			is = new BufferedInputStream(s.getInputStream());
-			br = new ServerLogReader(new InputStreamReader(is));
-			os = new BufferedOutputStream(s.getOutputStream());
-			writer = new BufferedWriter(new OutputStreamWriter(os));
-			
+			is = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+			os = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
 			this.currentRoom = chatRoom;
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-	}
-	
-	public InputStream getInputStream() {
-		return is;
-	}
-	
-	public OutputStream getOutputStream(){
-		return os;
 	}
 	
 	public User(String name) {
@@ -54,20 +36,20 @@ public class User {
 	
 	public boolean readUserName() {
 		try {
-			String userName = br.readLine();	// L�s namn
+			String userName = Communication.readLineNoCatch(is);	// L�s namn
 			while (true) {
 				if (userName.length() < 3) {	// F�r kort.
-					Communication.sendMessage(writer, Server.NAME_TOO_SHORT);
+					Communication.sendMessage(os, Server.NAME_TOO_SHORT);
 				} else if (illegalName(userName)) {	// Olagliga tecken.
-					Communication.sendMessage(writer, Server.NAME_ILLEGAL);
+					Communication.sendMessage(os, Server.NAME_ILLEGAL);
 				} else if (currentRoom.hasUser(userName)) {	// Finns redan en anv�ndare med det namnet.
-					Communication.sendMessage(writer, Server.NAME_TAKEN);
+					Communication.sendMessage(os, Server.NAME_TAKEN);
 				} else {	// OK namn.
 					this.userName = userName;
 					joinCurrentRoom();
 					return true;
 				}
-				userName = br.readLine();	// L�s ett nytt namn.
+				userName = Communication.readLineNoCatch(is);	// L�s ett nytt namn.
 			}
 		} catch (SocketException e) {	// Anv�ndaren st�ngde av programmet n�r de valde namn.
 			return false;				// Returnerar false s� att klienten vet att den ska st�nga av.
@@ -94,13 +76,13 @@ public class User {
 	// St�nger Readern och Writern och s�tter dem till null s� att vi inte kan anv�nda dem igen.
 	public void closeConnection() {
 		try {
-			if (br != null) {
-				br.close();
-				br = null;
+			if (is != null) {
+				is.close();
+				is = null;
 			}
-			if (writer != null) {
-				writer.close();
-				writer = null;
+			if (os != null) {
+				os.close();
+				os = null;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -108,12 +90,12 @@ public class User {
 		}
 	}
 	
-	public BufferedReader getBufferedReader() {
-		return br;
+	public DataInputStream getInputStream() {
+		return is;
 	}
 	
-	public Writer getWriter() {
-		return writer;
+	public DataOutputStream getOutputStream() {
+		return os;
 	}
 	
 	public void setCurrentRoom(ChatRoom room) {
@@ -135,7 +117,7 @@ public class User {
 	
 	// Ber�ttar f�r rummet att vi gick med.
 	private void joinCurrentRoom() {
-		Communication.sendMessage(writer, Server.NAME_OK);
+		Communication.sendMessage(os, Server.NAME_OK);
 		currentRoom.addUser(this);
 		currentRoom.broadcast(userName + " joined.");	// Ber�tta f�r alla att n�gon gick med.
 	}
