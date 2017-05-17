@@ -108,7 +108,8 @@ public class ClientWindow extends JFrame {
 		if (text.toLowerCase().startsWith(Communication.CHAT_PRIVATE_MESSAGE)) {	// Privat meddelande
 			StringPair um = ChatUtil.getWhisperNameMessage(text);	// H�mta namn och meddelande.
 			if (um != null) {	// Om det finns ett namn och ett meddelande
-				send(Communication.PRIVATE_MESSAGE + um.one + "\r\n", um.two);
+				send(Communication.PRIVATE_MESSAGE + um.one);	// Skicka namn
+				send(um.two);	// Skicka meddelande.
 			}
 		} else if (text.equalsIgnoreCase(Communication.CHAT_LIST_USERS)) {
 			send(Communication.LIST_USERS);

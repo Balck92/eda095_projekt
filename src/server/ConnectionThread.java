@@ -1,8 +1,8 @@
 package server;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import util.Communication;
 
@@ -53,11 +53,13 @@ public class ConnectionThread extends Thread {
 		}
 	}
 
-	private void receiveImage(String sizeStr) {
-		int size = Integer.parseInt(sizeStr);
+	private void receiveImage(String sizeNameStr) {
+		String[] sizeName = sizeNameStr.split(" ");
+		int size = Integer.parseInt(sizeName[0]);
+		String name = sizeName[1]; 
 		try {
 			// L�s bytes fr�n klienten.
-	        InputStream inputStream = user.getInputStream();
+	        DataInputStream inputStream = user.getInputStream();
 	        byte[] imageData = new byte[size];
 	        for (int pos = 0; pos < size; ) {
 	        	int bytesRead = inputStream.read(imageData, pos, size - pos);
@@ -68,10 +70,8 @@ public class ConnectionThread extends Thread {
 	        	pos += bytesRead;
 	        }
 	        
-	        System.out.println("Servern tog emot storlek " + size + " av " + user.getName());
-	        
 	        // Skicka bilden till alla anv�ndare.
-			user.getCurrentRoom().broadcastImage(imageData);
+			user.getCurrentRoom().broadcastImage(name, imageData);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

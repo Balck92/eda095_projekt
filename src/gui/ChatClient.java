@@ -28,6 +28,7 @@ public class ChatClient {
 	}
 
 	// Kopplingen till servern
+	private String userName;
 	private DataInputStream is;
 	private DataOutputStream os;
 
@@ -88,7 +89,7 @@ public class ChatClient {
 	        byte[] imageData = bytesStream.toByteArray();
 	        
 	        // Skicka storleken och arrayn.
-			Communication.sendMessage(os, Communication.SEND_IMAGE + imageData.length);
+			Communication.sendMessage(os, Communication.SEND_IMAGE + imageData.length + " " + userName);
 	        os.write(imageData);
 	        os.flush();
 		} catch (IOException e) {
@@ -106,6 +107,7 @@ public class ChatClient {
 			Communication.sendMessage(os, name);	// Skicka fï¿½rslag pï¿½ namn till servern.
 			String response = Communication.readLine(is);		// Serverns svar.
 			if (response.startsWith(Server.NAME_OK)) {	// OK namn.
+				userName = name;
 				window.setTitle(name + " - Chat");
 				return;
 			} else if (response.startsWith(Server.NAME_TAKEN)) {	// Nï¿½gon annan har redan namnet.
@@ -171,9 +173,10 @@ public class ChatClient {
 	}
 	
 	// Lï¿½gger bilden i ett eget fï¿½nster.
-	private void receiveImage(String sizeStr) {
-		int size = Integer.parseInt(sizeStr);
-		System.out.println("Tog emot storlek: " + sizeStr);
+	private void receiveImage(String sizeNameStr) {
+		String[] sizeName = sizeNameStr.split(" ");
+		int size = Integer.parseInt(sizeName[0]);
+		String name = sizeName[1];
 		try {
 			// Lï¿½s in bilddata.
 	        byte[] imageData = new byte[size];
@@ -187,12 +190,12 @@ public class ChatClient {
 	        	}
 	        }
 	        
-	        
 	        // Skapa bilden.
 	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 	        if (image == null) {
 	        	System.err.println("Bild som klient tog mot är null");
 	        } else {
+	        	window.addLine(String.format("[%s]:", name));
 	        	window.addImage(image);
 	        }
 		} catch (IOException e) {

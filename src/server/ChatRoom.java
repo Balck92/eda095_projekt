@@ -38,17 +38,15 @@ public class ChatRoom {
 		return true;
 	}
 	
-	public synchronized void broadcastImage(byte[] imageData) {
+	public synchronized void broadcastImage(String name, byte[] imageData) {
 		for (User user : users.values()) {
 			// Berätta för klienten att de får en bild och skicka storleken på bilden.
-			Communication.sendMessage(user, Communication.SEND_IMAGE + imageData.length);
+			Communication.sendMessage(user, Communication.SEND_IMAGE + imageData.length + " " + name);
 			sendImageToUser(user, imageData);
-	        System.out.println("Klar med att skicka bilden"	);
 		}
 	}
 	
 	private synchronized void sendImageToUser(User user, byte[] imageData) {
-		System.out.println("Servern skickar bild av stolek " + imageData.length + " till användare " + user.getName());
 		OutputStream os = user.getOutputStream();
         try {
         	os.write(imageData);	// Skicka bilden.
