@@ -10,7 +10,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
@@ -55,7 +54,7 @@ public class ChatClient {
 				userInput.show("Couldn't connect. " + ENTER_HOST_PORT_PROMPT);
 				try {
 					if (s != null) {
-						s.close();	// Stäng socketen om det inte gick att connecta.
+						s.close();	// Stï¿½ng socketen om det inte gick att connecta.
 					}
 				} catch (IOException ex) {}
 			}
@@ -150,7 +149,7 @@ public class ChatClient {
 					if (line != null) {
 						handleLine(line);
 					}
-				} catch (IOException e) {	// Användaren stängde ner.
+				} catch (IOException e) {	// Anvï¿½ndaren stï¿½ngde ner.
 					break;
 				}
 			}
@@ -193,7 +192,7 @@ public class ChatClient {
 	        // Skapa bilden.
 	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 	        if (image == null) {
-	        	System.err.println("Bild som klient tog mot är null");
+	        	System.err.println("Bild som klient tog mot ï¿½r null");
 	        } else {
 	        	window.addLine(String.format("[%s]:", name));
 	        	window.addImage(image);
